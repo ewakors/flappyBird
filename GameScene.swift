@@ -30,21 +30,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var restartButton = SKSpriteNode()
     let scoreLabel = SKLabelNode()
     
+    var touchStarted: TimeInterval?
+    let longTapTime: TimeInterval = 0.5
+    
     override func didMove(to view: SKView) {
     
         createScene()
+        let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(GameScene.longPressed(longPress:)))
+        self.view?.addGestureRecognizer(longGesture)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(GameScene.tabGestureRecognizer(tabGester:)))
+        tapGesture.numberOfTapsRequired = 1
+       // self.view?.addGestureRecognizer(tapGesture)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+
         if gameStarted == false {
-            
             gameStarted = true
             
             Ghost.physicsBody?.affectedByGravity = true
             
             let spawn = SKAction.run({
                 () in
-                
                 self.createWalls()
             })
             
@@ -80,6 +88,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //print("end")
+        Ghost.physicsBody?.affectedByGravity = true
+        print("end")
+    }
     
     override func update(_ currentTime: TimeInterval) {
         if gameStarted == true {
@@ -89,7 +103,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                     let background = node as! SKSpriteNode
                     // 20 - speeder background
-                    background.position = CGPoint(x: background.position.x - 6, y: background.position.y)
+                    background.position = CGPoint(x: background.position.x - 2, y: background.position.y)
                     
                     if background.position.x <= -background.size.width {
                         background.position = CGPoint(x: background.position.x + background.size.width * 2,y: background.position.y)
@@ -110,16 +124,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             scoreLabel.text = "\(score)"
             firstBody.node?.removeFromParent()
             
-        }
-        else if firstBody.categoryBitMask == PhysicsCategory.Ghost && secondBody.categoryBitMask == PhysicsCategory.Score {
+        } else if firstBody.categoryBitMask == PhysicsCategory.Ghost && secondBody.categoryBitMask == PhysicsCategory.Score {
             
             score += 1
             scoreLabel.text = "\(score)"
             secondBody.node?.removeFromParent()
             
-        }
-            
-        else if firstBody.categoryBitMask == PhysicsCategory.Ghost && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Ghost{
+        } else if firstBody.categoryBitMask == PhysicsCategory.Ghost && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Ghost{
             
             enumerateChildNodes(withName: GameScene.wallName, using: ({
                 (node, error) in
@@ -128,12 +139,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.removeAllActions()
                 
             }))
-            if died == false{
+            
+            if died == false {
                 died = true
                 createRestartButton()
             }
-        }
-        else if firstBody.categoryBitMask == PhysicsCategory.Ghost && secondBody.categoryBitMask == PhysicsCategory.Ground || firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Ghost{
+        } else if firstBody.categoryBitMask == PhysicsCategory.Ghost && secondBody.categoryBitMask == PhysicsCategory.Ground || firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Ghost{
             
             enumerateChildNodes(withName: GameScene.wallName, using: ({
                 (node, error) in
@@ -165,21 +176,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         wallPair = SKNode()
         wallPair.name = GameScene.wallName
         
-        //let topWall = SKSpriteNode(imageNamed: "Wall")
+        let topWall = SKSpriteNode(imageNamed: "Wall")
         let btmWall = SKSpriteNode(imageNamed: "Wall")
-        
-        //topWall.position = CGPoint(x: self.frame.width + 25, y: self.frame.height / 2 + 350)
-        btmWall.position = CGPoint(x: self.frame.width + 25 , y: self.frame.height / 2 - 350)
-        
-        //topWall.setScale(0.5)
+
+        topWall.setScale(0.5)
         btmWall.setScale(0.5)
         
-//        topWall.physicsBody = SKPhysicsBody(rectangleOf: topWall.size)
-//        topWall.physicsBody?.categoryBitMask = PhysicsCategory.Wall
-//        topWall.physicsBody?.collisionBitMask = PhysicsCategory.Ghost
-//        topWall.physicsBody?.contactTestBitMask = PhysicsCategory.Ghost
-//        topWall.physicsBody?.affectedByGravity = false
-//        topWall.physicsBody?.isDynamic = false
+        topWall.physicsBody = SKPhysicsBody(rectangleOf: topWall.size)
+        topWall.physicsBody?.categoryBitMask = PhysicsCategory.Wall
+        topWall.physicsBody?.collisionBitMask = PhysicsCategory.Ghost
+        topWall.physicsBody?.contactTestBitMask = PhysicsCategory.Ghost
+        topWall.physicsBody?.affectedByGravity = false
+        topWall.physicsBody?.isDynamic = false
         
         btmWall.physicsBody = SKPhysicsBody(rectangleOf: btmWall.size)
         btmWall.physicsBody?.categoryBitMask = PhysicsCategory.Wall
@@ -188,6 +196,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         btmWall.physicsBody?.affectedByGravity = false
         btmWall.physicsBody?.isDynamic = false
         
+        topWall.position = CGPoint(x: self.frame.width, y: self.frame.height / 2 - 350)
+        btmWall.position = CGPoint(x: self.frame.width + 25 , y: self.frame.height / 2 - 350)
+
         //topWall.zRotation = CGFloat(M_PI)
         
         //wallPair.addChild(topWall)
@@ -196,20 +207,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         wallPair.zPosition = 1
         
        // let randomWallPosition = CGFloat.random(min: -200,max: 200)
-        let wallHeight = CGFloat.staticHeight(wallHeight: 50)
-        wallPair.position.y = wallPair.position.y + wallHeight
-        
-        //let distanceBetweenWalls = CGFloat.staticDictance(distanceBetweenWalls: 400)
-       // wallPair.position.x = wallPair.position.x + distanceBetweenWalls
-        
+        if score < 5 {
+            let wallHeight = CGFloat.staticHeight(wallHeight: 50)
+            wallPair.position.y = wallPair.position.y + wallHeight
+        } else {
+            let wallHeight = CGFloat.staticHeight(wallHeight: 100)
+            wallPair.position.y = wallPair.position.y + wallHeight
+        }
+
         wallPair.addChild(scoreNode)
-        
         wallPair.run(moveAndRemove)
         
         self.addChild(wallPair)
     }
     
     func createRestartButton() {
+        
         restartButton = SKSpriteNode(imageNamed: "RestartBtn")
         restartButton.size = CGSize(width: 200, height: 100)
         restartButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
@@ -279,5 +292,71 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         Ghost.zPosition = 2
         
         self.addChild(Ghost)
+    }
+    
+    func longPressed(longPress: UILongPressGestureRecognizer) {
+        
+        if gameStarted == true {
+
+            print("long")
+            Ghost.physicsBody?.affectedByGravity = true
+            
+            let spawn = SKAction.run({
+                () in
+            })
+            
+            let delay = SKAction.wait(forDuration: 2.0)
+            let spawnDelay = SKAction.sequence([spawn,delay])
+            let spawnDelayForever = SKAction.repeatForever(spawnDelay)
+            self.run(spawnDelayForever)
+            
+            let distance = CGFloat(self.frame.width + wallPair.frame.width)
+            // 0.04 - faster
+            let movePipes = SKAction.moveBy(x: -distance - 50, y: 0, duration: TimeInterval(0.008 * distance))
+            let removePipes = SKAction.removeFromParent()
+            moveAndRemove = SKAction.sequence([movePipes,removePipes])
+            
+            Ghost.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+            Ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 90))
+        } else {
+            if died == true {
+                
+            } else {
+                Ghost.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                Ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 90))
+            }
+        }
+    }
+    
+    func tabGestureRecognizer(tabGester: UITapGestureRecognizer) {
+        
+        if gameStarted == true {
+            Ghost.physicsBody?.affectedByGravity = true
+            
+            let spawn = SKAction.run({
+                () in
+            })
+            
+            let delay = SKAction.wait(forDuration: 2.0)
+            let spawnDelay = SKAction.sequence([spawn,delay])
+            let spawnDelayForever = SKAction.repeatForever(spawnDelay)
+            self.run(spawnDelayForever)
+            
+            let distance = CGFloat(self.frame.width + wallPair.frame.width)
+            // 0.04 - faster
+            let movePipes = SKAction.moveBy(x: -distance - 50, y: 0, duration: TimeInterval(0.008 * distance))
+            let removePipes = SKAction.removeFromParent()
+            moveAndRemove = SKAction.sequence([movePipes,removePipes])
+            
+            Ghost.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+            Ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 90))
+        } else {
+            if died == true {
+                
+            } else {
+                Ghost.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                Ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 90))
+            }
+        }
     }
 }

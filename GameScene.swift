@@ -30,7 +30,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var score = Int()
     var died = Bool()
     var restartButton = SKSpriteNode()
+    var startButton = SKSpriteNode()
     let scoreLabel = SKLabelNode()
+    let startLabel = SKLabelNode()
+    
 
     override func didMove(to view: SKView) {
         createScene()
@@ -166,7 +169,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         btmWall.physicsBody?.isDynamic = false
         
         topWall.position = CGPoint(x: self.frame.width, y: self.frame.height / 2 - 350)
-        btmWall.position = CGPoint(x: self.frame.width + 25 , y: self.frame.height / 2 - 450)
+        btmWall.position = CGPoint(x: self.frame.width + 25 , y: self.frame.height / 2 - 350)
 
         //topWall.zRotation = CGFloat(M_PI)
         
@@ -198,8 +201,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         restartButton.zPosition = 6
         restartButton.setScale(0)
         self.addChild(restartButton)
-        
         restartButton.run(SKAction.scale(to: 1.0, duration: 0.3))
+    }
+    
+    func createStartButton() {
+        startButton = SKSpriteNode(imageNamed: "startButton")
+        startButton.size = CGSize(width: 200, height: 100)
+        startButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
+        startButton.zPosition = 6
+        startButton.setScale(0)
+        self.addChild(startButton)
+        startButton.run(SKAction.scale(to: 1.0, duration: 0.3))
     }
     
     func restartScene() {
@@ -232,6 +244,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.zPosition = 5
         self.addChild(scoreLabel)
         
+//        startLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 + self.frame.height / 2.5)
+//        startLabel.text = "Start game"
+//        startLabel.fontName = "FlappyBirdy"
+//        startLabel.fontSize = 60
+//        startLabel.zPosition = 5
+//        self.addChild(startLabel)
+        
+//        createStartButton()
+        
         Ceiling = SKSpriteNode(imageNamed: "Ground")
         Ceiling.setScale(0.5)
         Ceiling.position = CGPoint(x: self.frame.width / 2, y: 0 + Ceiling.frame.height / 2 + 650)
@@ -257,8 +278,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         Ground.zPosition = 3
         self.addChild(Ground)
         
-        Ghost = SKSpriteNode(imageNamed: "Ghost")
-        Ghost.size = CGSize(width: 40, height: 50)
+        Ghost = SKSpriteNode(imageNamed: "Kucyk")
+        Ghost.size = CGSize(width: 60, height: 70)
         Ghost.position = CGPoint(x: self.frame.width / 3 - Ghost.frame.width, y: self.frame.height / 3)
         Ghost.physicsBody = SKPhysicsBody(circleOfRadius: Ghost.frame.height / 2)
         Ghost.physicsBody?.categoryBitMask = PhysicsCategory.Ghost
@@ -274,7 +295,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if gameStarted == true {
 
-            print("long")
             Ghost.physicsBody?.affectedByGravity = true
             
             let spawn = SKAction.run({

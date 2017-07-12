@@ -20,6 +20,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     static let wallName = "wallPair"
     static let backgroundName = "background"
+    static let highScoreField = "highScoreLabel"
     
     var Ground = SKSpriteNode()
     var Ceiling = SKSpriteNode()
@@ -32,11 +33,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var restartButton = SKSpriteNode()
     var startButton = SKSpriteNode()
     let scoreLabel = SKLabelNode()
+    let highScoreLabel = SKLabelNode()
     let startLabel = SKLabelNode()
     
 
     override func didMove(to view: SKView) {
         createScene()
+        saveHighScore(highScore: score)
         //let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(GameScene.longPressed(longPress:)))
         //self.view?.addGestureRecognizer(longGesture)
     }
@@ -202,7 +205,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.removeAllChildren()
         self.removeAllActions()
         died = false
-        gameStarted = false 
+        gameStarted = false
+        saveHighScore(highScore: score)
         score = 0
         createScene()
     }
@@ -220,12 +224,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.addChild(background)
         }
         
-        scoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 + self.frame.height / 2.5)
+        scoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2.5 + self.frame.height / 2.5)
         scoreLabel.text = "\(score)"
         scoreLabel.fontName = "FlappyBirdy"
         scoreLabel.fontSize = 60
         scoreLabel.zPosition = 5
         self.addChild(scoreLabel)
+        
+        highScoreLabel.position = CGPoint(x: self.frame.width / 3, y: self.frame.height / 2 + self.frame.height / 2.5)
+        //highScoreLabel.text = "High score: \(score)"
+        highScoreLabel.fontName = "FlappyBirdy"
+        highScoreLabel.fontSize = 40
+        highScoreLabel.zPosition = 8
+        self.addChild(highScoreLabel)
         
 //        startLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 + self.frame.height / 2.5)
 //        startLabel.text = "Start game"
@@ -313,5 +324,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func ponyJumpFeatures(height: CGFloat) {
         Pony.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
         Pony.physicsBody?.applyImpulse(CGVector(dx: 1, dy: 150))
+    }
+    
+    func saveHighScore(highScore:Int){
+
+        print("\(highScore)")
+        if let currentHighScore:Int = UserDefaults.standard.value(forKey: GameScene.highScoreField) as? Int{
+            print("high2: \(currentHighScore)")
+            highScoreLabel.text = "High score: \(currentHighScore)"
+            if(highScore > currentHighScore){
+                UserDefaults.standard.set(highScore, forKey: GameScene.highScoreField)
+                UserDefaults.standard.synchronize()
+                print("h: \(currentHighScore)")
+            }
+        } else{
+            highScoreLabel.text = "High score: \(highScore)"
+            UserDefaults.standard.set(highScore, forKey: GameScene.highScoreField)
+            UserDefaults.standard.synchronize()
+            print("high: \(highScore)")
+        }
     }
 }

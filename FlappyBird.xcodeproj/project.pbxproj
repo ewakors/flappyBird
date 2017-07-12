@@ -18,6 +18,8 @@
 		C39CD4381F1387F500773D4A /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = C39CD4371F1387F500773D4A /* GameScene.sks */; };
 		C39CD43A1F1390F800773D4A /* RandomFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C39CD4391F1390F800773D4A /* RandomFunction.swift */; };
 		C39CD43C1F13AAB000773D4A /* FlappyBirdy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C39CD43B1F13AAB000773D4A /* FlappyBirdy.ttf */; };
+		C3D020971F163C6C000490FB /* HighScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D020961F163C6C000490FB /* HighScore.swift */; };
+		C3D020991F163E60000490FB /* HighScoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D020981F163E60000490FB /* HighScoreManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,8 @@
 		C39CD4371F1387F500773D4A /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		C39CD4391F1390F800773D4A /* RandomFunction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomFunction.swift; sourceTree = "<group>"; };
 		C39CD43B1F13AAB000773D4A /* FlappyBirdy.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FlappyBirdy.ttf; sourceTree = "<group>"; };
+		C3D020961F163C6C000490FB /* HighScore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HighScore.swift; sourceTree = "<group>"; };
+		C3D020981F163E60000490FB /* HighScoreManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HighScoreManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +114,7 @@
 				C39CD4371F1387F500773D4A /* GameScene.sks */,
 				C39CD4351F137A1000773D4A /* GameScene.swift */,
 				C39CD4391F1390F800773D4A /* RandomFunction.swift */,
+				C3D020951F163C37000490FB /* Score */,
 			);
 			path = FlappyBird;
 			sourceTree = "<group>";
@@ -143,6 +148,15 @@
 				C39CD4121F13790800773D4A /* Info.plist */,
 			);
 			name = support;
+			sourceTree = "<group>";
+		};
+		C3D020951F163C37000490FB /* Score */ = {
+			isa = PBXGroup;
+			children = (
+				C3D020961F163C6C000490FB /* HighScore.swift */,
+				C3D020981F163E60000490FB /* HighScoreManager.swift */,
+			);
+			name = Score;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -286,8 +300,10 @@
 			files = (
 				C39CD4361F137A1000773D4A /* GameScene.swift in Sources */,
 				C39CD4091F13790800773D4A /* GameViewController.swift in Sources */,
+				C3D020991F163E60000490FB /* HighScoreManager.swift in Sources */,
 				C39CD43A1F1390F800773D4A /* RandomFunction.swift in Sources */,
 				C39CD4071F13790800773D4A /* AppDelegate.swift in Sources */,
+				C3D020971F163C6C000490FB /* HighScore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,6 +552,7 @@
 				C39CD42D1F13790800773D4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C39CD42E1F13790800773D4A /* Build configuration list for PBXNativeTarget "FlappyBirdTests" */ = {
 			isa = XCConfigurationList;
@@ -544,6 +561,7 @@
 				C39CD4301F13790800773D4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C39CD4311F13790800773D4A /* Build configuration list for PBXNativeTarget "FlappyBirdUITests" */ = {
 			isa = XCConfigurationList;
@@ -552,6 +570,7 @@
 				C39CD4331F13790800773D4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -38,7 +38,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView) {
         createScene()
         let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(GameScene.longPressed(longPress:)))
-        self.view?.addGestureRecognizer(longGesture)
+        //self.view?.addGestureRecognizer(longGesture)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -57,12 +57,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let spawnDelay = SKAction.sequence([spawn,delay])
             let spawnDelayForever = SKAction.repeatForever(spawnDelay)
             self.run(spawnDelayForever)
-            
-            let distance = CGFloat(self.frame.width + wallPair.frame.width)
-            // 0.04 - faster
-            let movePipes = SKAction.moveBy(x: -distance - 50, y: 0, duration: TimeInterval(0.008 * distance))
-            let removePipes = SKAction.removeFromParent()
-            moveAndRemove = SKAction.sequence([movePipes,removePipes])
+
+            distanceBetweenWalls(distanceLength: 100.0)
             
             Ghost.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             Ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 90))
@@ -136,7 +132,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let scoreNode = SKSpriteNode(imageNamed: "Coin")
         scoreNode.size = CGSize(width: 50, height: 50)
-        scoreNode.position = CGPoint(x: self.frame.width + 25, y: self.frame.height / 2)
+        scoreNode.position = CGPoint(x: self.frame.width + 25, y: self.frame.height / 2 - 170)
         scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
         scoreNode.physicsBody?.affectedByGravity = false
         scoreNode.physicsBody?.isDynamic = false
@@ -169,7 +165,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         btmWall.physicsBody?.isDynamic = false
         
         topWall.position = CGPoint(x: self.frame.width, y: self.frame.height / 2 - 350)
-        btmWall.position = CGPoint(x: self.frame.width + 25 , y: self.frame.height / 2 - 350)
+        btmWall.position = CGPoint(x: self.frame.width + 25 , y: self.frame.height / 2 - 450)
 
         //topWall.zRotation = CGFloat(M_PI)
         
@@ -179,12 +175,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         wallPair.zPosition = 1
         
        // let randomWallPosition = CGFloat.random(min: -200,max: 200)
-        if score < 5 {
-            let wallHeight = CGFloat.staticHeight(wallHeight: 50)
-            wallPair.position.y = wallPair.position.y + wallHeight
-        } else if score >= 5 && score < 10 {
-            let wallHeight = CGFloat.staticHeight(wallHeight: 60)
-            wallPair.position.y = wallPair.position.y + wallHeight
+        if score < 3 {
+            let height = CGFloat.staticHeight(wallHeight: 20)
+            wallPair.position.y = wallPair.position.y + height
+            scoreNode.position.y = scoreNode.position.y + height
+        } else if score >= 3 && score < 10 {
+            let height = CGFloat.staticHeight(wallHeight: 40)
+            wallPair.position.y = wallPair.position.y + height
+            scoreNode.position.y = scoreNode.position.y + height
         }
 
         wallPair.addChild(scoreNode)
@@ -279,8 +277,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(Ground)
         
         Ghost = SKSpriteNode(imageNamed: "Kucyk")
-        Ghost.size = CGSize(width: 60, height: 70)
-        Ghost.position = CGPoint(x: self.frame.width / 3 - Ghost.frame.width, y: self.frame.height / 3)
+        Ghost.size = CGSize(width: 70, height: 80)
+        Ghost.position = CGPoint(x: self.frame.width / 2 - Ghost.frame.width, y: self.frame.height / 2)
         Ghost.physicsBody = SKPhysicsBody(circleOfRadius: Ghost.frame.height / 2)
         Ghost.physicsBody?.categoryBitMask = PhysicsCategory.Ghost
         Ghost.physicsBody?.collisionBitMask = PhysicsCategory.Ground | PhysicsCategory.Wall | PhysicsCategory.Ceiling
@@ -322,5 +320,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 Ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 90))
             }
         }
+    }
+    
+    func distanceBetweenWalls(distanceLength: CGFloat) {
+        
+        let distance = CGFloat(self.frame.width + wallPair.frame.width)
+        // 0.004 - faster
+        //let movePipes = SKAction.moveBy(x: -distance - 50, y: 100, duration: TimeInterval(0.008 * distance)) - move pipes
+        let movePipes = SKAction.moveBy(x: -distance - distanceLength, y: 0, duration: TimeInterval(0.008 * distance))
+        let removePipes = SKAction.removeFromParent()
+        moveAndRemove = SKAction.sequence([movePipes,removePipes])
     }
 }

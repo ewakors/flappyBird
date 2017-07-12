@@ -131,7 +131,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func createWalls() {
         
-        let scoreNode = SKSpriteNode(imageNamed: "Coin")
+        let scoreNode = SKSpriteNode(imageNamed: "coinHeart")
         scoreNode.size = CGSize(width: 50, height: 50)
         scoreNode.position = CGPoint(x: self.frame.width + 25, y: self.frame.height / 2 - 170)
         scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
@@ -216,7 +216,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.contactDelegate = self
         
         for i in 0..<2 {
-            let background = SKSpriteNode(imageNamed: "Background")
+            let background = SKSpriteNode(imageNamed: "Background2")
             background.anchorPoint = CGPoint.zero
             background.position = CGPoint(x: CGFloat(i) * self.frame.width, y: 0)
             background.name = GameScene.backgroundName
@@ -227,12 +227,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2.5 + self.frame.height / 2.5)
         scoreLabel.text = "\(score)"
         scoreLabel.fontName = "FlappyBirdy"
-        scoreLabel.fontSize = 60
+        scoreLabel.fontSize = 40
         scoreLabel.zPosition = 5
         self.addChild(scoreLabel)
         
         highScoreLabel.position = CGPoint(x: self.frame.width / 3, y: self.frame.height / 2 + self.frame.height / 2.5)
-        //highScoreLabel.text = "High score: \(score)"
         highScoreLabel.fontName = "FlappyBirdy"
         highScoreLabel.fontSize = 40
         highScoreLabel.zPosition = 8

@@ -24,6 +24,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     static let highScoreField = "highScoreLabel"
     static let startGameMusicField = "startGameMusic"
     static let backgroundMusicField = "backgroundMusic"
+    static let scoreMusicField = "scoreMusic"
     static let gameOverMusicField = "gameOverMusic"
     static let coinImageField = "coinHeart"
     static let wallImageField = "Wall"
@@ -136,6 +137,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             score += 1
             scoreLabel.text = "\(score)"
+            playGameMusic(filename: GameScene.scoreMusicField, autoPlayLooped: false)
             firstBody.node?.removeFromParent()
             
         } else if (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Ground || firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Pony) {

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C35292911F1769DE0004E6B7 /* gameOverMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C35292901F1769DE0004E6B7 /* gameOverMusic.mp3 */; };
 		C35292931F178DD50004E6B7 /* startGameMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C35292921F178DD50004E6B7 /* startGameMusic.mp3 */; };
+		C35292971F1799320004E6B7 /* scoreMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C35292961F1799320004E6B7 /* scoreMusic.mp3 */; };
 		C36132EB1F175E110061D662 /* backgroundMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C36132EA1F175E110061D662 /* backgroundMusic.mp3 */; };
 		C39CD4071F13790800773D4A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C39CD4061F13790800773D4A /* AppDelegate.swift */; };
 		C39CD4091F13790800773D4A /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C39CD4081F13790800773D4A /* GameViewController.swift */; };
@@ -43,6 +44,7 @@
 /* Begin PBXFileReference section */
 		C35292901F1769DE0004E6B7 /* gameOverMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = gameOverMusic.mp3; sourceTree = "<group>"; };
 		C35292921F178DD50004E6B7 /* startGameMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = startGameMusic.mp3; sourceTree = "<group>"; };
+		C35292961F1799320004E6B7 /* scoreMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = scoreMusic.mp3; sourceTree = "<group>"; };
 		C36132EA1F175E110061D662 /* backgroundMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = backgroundMusic.mp3; sourceTree = "<group>"; };
 		C39CD4031F13790800773D4A /* FlappyBird.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlappyBird.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C39CD4061F13790800773D4A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 		C352928F1F1769C40004E6B7 /* Music */ = {
 			isa = PBXGroup;
 			children = (
+				C35292961F1799320004E6B7 /* scoreMusic.mp3 */,
 				C35292921F178DD50004E6B7 /* startGameMusic.mp3 */,
 				C35292901F1769DE0004E6B7 /* gameOverMusic.mp3 */,
 				C36132EA1F175E110061D662 /* backgroundMusic.mp3 */,
@@ -279,6 +282,7 @@
 				C39CD4111F13790800773D4A /* LaunchScreen.storyboard in Resources */,
 				C39CD40E1F13790800773D4A /* Assets.xcassets in Resources */,
 				C39CD40C1F13790800773D4A /* Main.storyboard in Resources */,
+				C35292971F1799320004E6B7 /* scoreMusic.mp3 in Resources */,
 				C35292911F1769DE0004E6B7 /* gameOverMusic.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

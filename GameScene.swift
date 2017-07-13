@@ -22,6 +22,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     static let wallName = "wallPair"
     static let backgroundName = "background"
     static let highScoreField = "highScoreLabel"
+    static let startGameMusicField = "startGameMusic"
     static let backgroundMusicField = "backgroundMusic"
     static let gameOverMusicField = "gameOverMusic"
     static let coinImageField = "coinHeart"
@@ -62,12 +63,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch: AnyObject in touches {
             let location = touch.location(in: self)
             if startButton.contains(location) {
+                
+
                 if gameStarted == false {
                     startButton.removeFromParent()
                     startButton.size = CGSize(width: self.frame.width, height: self.frame.height)
 
                     gameStarted = true
-                    
+                    musicGame.run((SKAction.stop()))
                     playGameMusic(filename: GameScene.backgroundMusicField)
                     musicGame.run((SKAction.play()))
                     
@@ -223,6 +226,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         startButton.setScale(0)
         self.addChild(startButton)
         startButton.run(SKAction.scale(to: 1.0, duration: 0.3))
+        playGameMusic(filename: GameScene.startGameMusicField)
+        musicGame.run((SKAction.play()))
     }
     
     func restartScene() {
@@ -263,15 +268,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         highScoreLabel.fontSize = 40
         highScoreLabel.zPosition = 8
         self.addChild(highScoreLabel)
-        
-//        startLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 + self.frame.height / 2.5)
-//        startLabel.text = "Start game"
-//        startLabel.fontName = "FlappyBirdy"
-//        startLabel.fontSize = 60
-//        startLabel.zPosition = 5
-//        self.addChild(startLabel)
-        
-//        createStartButton()
         
         Ceiling = SKSpriteNode(imageNamed: GameScene.groundImageField)
         Ceiling.setScale(0.5)

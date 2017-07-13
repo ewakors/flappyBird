@@ -71,8 +71,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
                     gameStarted = true
                     musicGame.run((SKAction.stop()))
-                    playGameMusic(filename: GameScene.backgroundMusicField)
-                    musicGame.run((SKAction.play()))
+                    playGameMusic(filename: GameScene.backgroundMusicField, autoPlayLooped: true)
                     
                     Pony.physicsBody?.affectedByGravity = true
                     
@@ -152,7 +151,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if died == false {
                 died = true
                 musicGame.run((SKAction.stop()))
-                playGameMusic(filename: GameScene.gameOverMusicField)
+                playGameMusic(filename: GameScene.gameOverMusicField, autoPlayLooped: false)
                 createRestartButton()
             }
         }
@@ -226,8 +225,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         startButton.setScale(0)
         self.addChild(startButton)
         startButton.run(SKAction.scale(to: 1.0, duration: 0.3))
-        playGameMusic(filename: GameScene.startGameMusicField)
-        musicGame.run((SKAction.play()))
+        playGameMusic(filename: GameScene.startGameMusicField, autoPlayLooped: false)
     }
     
     func restartScene() {
@@ -239,8 +237,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         score = 0
         createStartButton()
         createScene()
-        playGameMusic(filename: GameScene.backgroundMusicField)
-        musicGame.run((SKAction.stop()))
     }
     
     func createScene() {
@@ -363,9 +359,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func playGameMusic(filename: String) {
+    func playGameMusic(filename: String, autoPlayLooped: Bool) {
         if let musicURL = Bundle.main.url(forResource: filename, withExtension: "mp3") {
             musicGame = SKAudioNode(url: musicURL)
+            musicGame.autoplayLooped = autoPlayLooped
             print("\(musicURL)")
             addChild(musicGame)
             
@@ -373,5 +370,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             print("could not find file \(filename)")
             return
         }
+        
+        musicGame.run(SKAction.play())
     }
 }

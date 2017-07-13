@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import AVFoundation
 
 struct PhysicsCategory {
     static let Pony: UInt32 = 0x1 << 1
@@ -21,6 +22,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     static let wallName = "wallPair"
     static let backgroundName = "background"
     static let highScoreField = "highScoreLabel"
+    static let backgroundMusicField = "backgroundMusic"
+    static let gameOverMusicField = "gameOverMusic"
+    static let coinImageField = "coinHeart"
+    static let wallImageField = "Wall"
+    static let restartBtnImageField = "RestartBtn"
+    static let startBtnImageField = "startButton"
+    static let backgroundImageField = "Background2"
+    static let fontNameField = "FlappyBirdy"
+    static let groundImageField = "Ground"
+    static let ponyImageField = "Kucyk"
     
     var Ground = SKSpriteNode()
     var Ceiling = SKSpriteNode()
@@ -32,52 +43,110 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var died = Bool()
     var restartButton = SKSpriteNode()
     var startButton = SKSpriteNode()
+    var musicGame = SKAudioNode()
     let scoreLabel = SKLabelNode()
     let highScoreLabel = SKLabelNode()
     let startLabel = SKLabelNode()
     
 
     override func didMove(to view: SKView) {
+        createStartButton()
         createScene()
         saveHighScore(highScore: score)
+
         //let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(GameScene.longPressed(longPress:)))
         //self.view?.addGestureRecognizer(longGesture)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
-        if gameStarted == false {
-            gameStarted = true
-            
-            Pony.physicsBody?.affectedByGravity = true
-            
-            let spawn = SKAction.run({
-                () in
-                self.createWalls()
-            })
-            
-            let delay = SKAction.wait(forDuration: 2.0)
-            let spawnDelay = SKAction.sequence([spawn,delay])
-            let spawnDelayForever = SKAction.repeatForever(spawnDelay)
-            self.run(spawnDelayForever)
-
-            distanceBetweenWalls(distanceLength: 100.0)
-            ponyJumpFeatures(height: 150)
-
-        } else {
-            if died == true {
-
-            } else {
-            ponyJumpFeatures(height: 150)
+        for touch: AnyObject in touches {
+            let location = touch.location(in: self)
+            if startButton.contains(location) {
+                if gameStarted == false {
+                    startButton.removeFromParent()
+                    gameStarted = true
+                    
+                    playGameMusic(filename: GameScene.backgroundMusicField)
+                    musicGame.run((SKAction.play()))
+                    
+                    Pony.physicsBody?.affectedByGravity = true
+                    
+                    let spawn = SKAction.run({
+                        () in
+                        self.createWalls()
+                    })
+                    
+                    let delay = SKAction.wait(forDuration: 2.0)
+                    let spawnDelay = SKAction.sequence([spawn,delay])
+                    let spawnDelayForever = SKAction.repeatForever(spawnDelay)
+                    self.run(spawnDelayForever)
+                    
+                    distanceBetweenWalls(distanceLength: 100.0)
+                    ponyJumpFeatures(height: 150)
+                    
+                } else {
+                    if died == true {
+                        
+                    } else {
+                        ponyJumpFeatures(height: 150)
+                    }
+                }
+                
+                for touch in touches {
+                    let location = touch.location(in: self)
+                    
+                    if died == true {
+                        if restartButton.contains(location) {
+                            restartScene()
+                        }
+                    }
+                }
             }
         }
-        
-        for touch in touches {
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch: AnyObject in touches {
             let location = touch.location(in: self)
-            
-            if died == true {
-                if restartButton.contains(location) {
-                    restartScene()
+            if startButton.contains(location) {
+                if gameStarted == false {
+                    startButton.removeFromParent()
+                    gameStarted = true
+                    
+                    playGameMusic(filename: GameScene.backgroundMusicField)
+                    musicGame.run((SKAction.play()))
+                    
+                    Pony.physicsBody?.affectedByGravity = true
+                    
+                    let spawn = SKAction.run({
+                        () in
+                        self.createWalls()
+                    })
+                    
+                    let delay = SKAction.wait(forDuration: 2.0)
+                    let spawnDelay = SKAction.sequence([spawn,delay])
+                    let spawnDelayForever = SKAction.repeatForever(spawnDelay)
+                    self.run(spawnDelayForever)
+                    
+                    distanceBetweenWalls(distanceLength: 100.0)
+                    ponyJumpFeatures(height: 150)
+                    
+                } else {
+                    if died == true {
+                        
+                    } else {
+                        ponyJumpFeatures(height: 150)
+                    }
+                }
+                
+                for touch in touches {
+                    let location = touch.location(in: self)
+                    
+                    if died == true {
+                        if restartButton.contains(location) {
+                            restartScene()
+                        }
+                    }
                 }
             }
         }
@@ -124,6 +193,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             if died == false {
                 died = true
+                musicGame.run((SKAction.stop()))
+                playGameMusic(filename: GameScene.gameOverMusicField)
                 createRestartButton()
             }
         }
@@ -131,7 +202,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func createWalls() {
         
-        let scoreNode = SKSpriteNode(imageNamed: "coinHeart")
+        let scoreNode = SKSpriteNode(imageNamed: GameScene.coinImageField)
         scoreNode.size = CGSize(width: 50, height: 50)
         scoreNode.position = CGPoint(x: self.frame.width + 25, y: self.frame.height / 2 - 170)
         scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
@@ -145,7 +216,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         wall = SKNode()
         wall.name = GameScene.wallName
 
-        let bottomWall = SKSpriteNode(imageNamed: "Wall")
+        let bottomWall = SKSpriteNode(imageNamed: GameScene.wallImageField)
 
         bottomWall.setScale(0.5)
         bottomWall.physicsBody = SKPhysicsBody(rectangleOf: bottomWall.size)
@@ -180,8 +251,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createRestartButton() {
-        
-        restartButton = SKSpriteNode(imageNamed: "RestartBtn")
+        restartButton = SKSpriteNode(imageNamed: GameScene.restartBtnImageField)
         restartButton.size = CGSize(width: 200, height: 100)
         restartButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
         restartButton.zPosition = 6
@@ -191,7 +261,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createStartButton() {
-        startButton = SKSpriteNode(imageNamed: "startButton")
+        startButton = SKSpriteNode(imageNamed: GameScene.startBtnImageField )
         startButton.size = CGSize(width: 200, height: 100)
         startButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
         startButton.zPosition = 6
@@ -201,7 +271,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func restartScene() {
-        
         self.removeAllChildren()
         self.removeAllActions()
         died = false
@@ -209,6 +278,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         saveHighScore(highScore: score)
         score = 0
         createScene()
+        playGameMusic(filename: GameScene.backgroundMusicField)
+        musicGame.run((SKAction.stop()))
     }
     
     func createScene() {
@@ -216,7 +287,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.contactDelegate = self
         
         for i in 0..<2 {
-            let background = SKSpriteNode(imageNamed: "Background2")
+            let background = SKSpriteNode(imageNamed: GameScene.backgroundImageField)
             background.anchorPoint = CGPoint.zero
             background.position = CGPoint(x: CGFloat(i) * self.frame.width, y: 0)
             background.name = GameScene.backgroundName
@@ -226,13 +297,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         scoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2.5 + self.frame.height / 2.5)
         scoreLabel.text = "\(score)"
-        scoreLabel.fontName = "FlappyBirdy"
+        scoreLabel.fontName = GameScene.fontNameField
         scoreLabel.fontSize = 40
         scoreLabel.zPosition = 5
         self.addChild(scoreLabel)
         
         highScoreLabel.position = CGPoint(x: self.frame.width / 3, y: self.frame.height / 2 + self.frame.height / 2.5)
-        highScoreLabel.fontName = "FlappyBirdy"
+        highScoreLabel.fontName = GameScene.fontNameField
         highScoreLabel.fontSize = 40
         highScoreLabel.zPosition = 8
         self.addChild(highScoreLabel)
@@ -246,7 +317,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
 //        createStartButton()
         
-        Ceiling = SKSpriteNode(imageNamed: "Ground")
+        Ceiling = SKSpriteNode(imageNamed: GameScene.groundImageField)
         Ceiling.setScale(0.5)
         Ceiling.position = CGPoint(x: self.frame.width / 2, y: 0 + Ceiling.frame.height / 2 + 650)
         Ceiling.physicsBody = SKPhysicsBody(rectangleOf: Ceiling.size)
@@ -259,7 +330,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         Ceiling.zPosition = 7
         self.addChild(Ceiling)
         
-        Ground = SKSpriteNode(imageNamed: "Ground")
+        Ground = SKSpriteNode(imageNamed: GameScene.groundImageField)
         Ground.setScale(0.5)
         Ground.position = CGPoint(x: self.frame.width / 2, y: 0 + Ground.frame.height / 2)
         Ground.physicsBody = SKPhysicsBody(rectangleOf: Ground.size)
@@ -271,7 +342,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         Ground.zPosition = 3
         self.addChild(Ground)
         
-        Pony = SKSpriteNode(imageNamed: "Kucyk")
+        Pony = SKSpriteNode(imageNamed: GameScene.ponyImageField )
         Pony.size = CGSize(width: 70, height: 80)
         Pony.position = CGPoint(x: self.frame.width / 2 - Pony.frame.width, y: self.frame.height / 2)
         Pony.physicsBody = SKPhysicsBody(circleOfRadius: Pony.frame.height / 2)
@@ -326,10 +397,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func saveHighScore(highScore:Int){
-
-        print("\(highScore)")
         if let currentHighScore:Int = UserDefaults.standard.value(forKey: GameScene.highScoreField) as? Int{
-            print("high2: \(currentHighScore)")
             highScoreLabel.text = "High score: \(currentHighScore)"
             if(highScore > currentHighScore){
                 UserDefaults.standard.set(highScore, forKey: GameScene.highScoreField)
@@ -340,7 +408,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             highScoreLabel.text = "High score: \(highScore)"
             UserDefaults.standard.set(highScore, forKey: GameScene.highScoreField)
             UserDefaults.standard.synchronize()
-            print("high: \(highScore)")
+        }
+    }
+    
+    func playGameMusic(filename: String) {
+        if let musicURL = Bundle.main.url(forResource: filename, withExtension: "mp3") {
+            musicGame = SKAudioNode(url: musicURL)
+            print("\(musicURL)")
+            addChild(musicGame)
+            
+        } else {
+            print("could not find file \(filename)")
+            return
         }
     }
 }

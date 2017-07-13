@@ -64,53 +64,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if startButton.contains(location) {
                 if gameStarted == false {
                     startButton.removeFromParent()
-                    gameStarted = true
-                    
-                    playGameMusic(filename: GameScene.backgroundMusicField)
-                    musicGame.run((SKAction.play()))
-                    
-                    Pony.physicsBody?.affectedByGravity = true
-                    
-                    let spawn = SKAction.run({
-                        () in
-                        self.createWalls()
-                    })
-                    
-                    let delay = SKAction.wait(forDuration: 2.0)
-                    let spawnDelay = SKAction.sequence([spawn,delay])
-                    let spawnDelayForever = SKAction.repeatForever(spawnDelay)
-                    self.run(spawnDelayForever)
-                    
-                    distanceBetweenWalls(distanceLength: 100.0)
-                    ponyJumpFeatures(height: 150)
-                    
-                } else {
-                    if died == true {
-                        
-                    } else {
-                        ponyJumpFeatures(height: 150)
-                    }
-                }
-                
-                for touch in touches {
-                    let location = touch.location(in: self)
-                    
-                    if died == true {
-                        if restartButton.contains(location) {
-                            restartScene()
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch: AnyObject in touches {
-            let location = touch.location(in: self)
-            if startButton.contains(location) {
-                if gameStarted == false {
-                    startButton.removeFromParent()
+                    startButton.size = CGSize(width: self.frame.width, height: self.frame.height)
+
                     gameStarted = true
                     
                     playGameMusic(filename: GameScene.backgroundMusicField)
@@ -277,6 +232,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameStarted = false
         saveHighScore(highScore: score)
         score = 0
+        createStartButton()
         createScene()
         playGameMusic(filename: GameScene.backgroundMusicField)
         musicGame.run((SKAction.stop()))

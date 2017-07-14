@@ -10,9 +10,7 @@ import SpriteKit
 import AVFoundation
 
 class GameOverScene: SKScene {
-    
 
-    
     let gameOverLabel = SKLabelNode()
     let scoreLabel = SKLabelNode()
     let highScoreLabel = SKLabelNode()
@@ -20,7 +18,7 @@ class GameOverScene: SKScene {
     
     override init(size: CGSize) {
         super.init(size: size)
-        
+ 
         createBackground()
         createGameOverLabel()
         createScoreLabel()
@@ -32,7 +30,7 @@ class GameOverScene: SKScene {
         for touch: AnyObject in touches {
             let location = touch.location(in: self)
             if restartButton.contains(location) {
-                GameScene.playGameMusic(filename: StaticValue.gameOverMusicField, autoPlayLooped: false)
+                //playGameMusic(filename: StaticValue.gameOverMusicField, autoPlayLooped: false)
                 let reveal: SKTransition = SKTransition.flipHorizontal(withDuration: 0.5)
                 let scene = GameScene(size: self.view!.bounds.size)
                 scene.scaleMode = .aspectFill
@@ -55,7 +53,6 @@ class GameOverScene: SKScene {
             self.addChild(background)
         }
     }
-   
     
     func createGameOverLabel() {
         gameOverLabel.fontName = StaticValue.fontNameField
@@ -98,6 +95,19 @@ class GameOverScene: SKScene {
         restartButton.setScale(0)
         self.addChild(restartButton)
         restartButton.run(SKAction.scale(to: 1.0, duration: 0.3))
+        playGameMusic(filename: StaticValue.gameOverMusicField, autoPlayLooped: false)
+    }
+    
+    func playGameMusic(filename: String, autoPlayLooped: Bool) {
+        if let musicURL = Bundle.main.url(forResource: filename, withExtension: "mp3") {
+            GameScene.musicGame = SKAudioNode(url: musicURL)
+            GameScene.musicGame.autoplayLooped = autoPlayLooped
+            self.addChild(GameScene.musicGame)
+            GameScene.musicGame.run(SKAction.play())
+        } else {
+            print("could not find file \(filename)")
+            return
+        }
     }
     
 }

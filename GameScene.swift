@@ -56,7 +56,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
                     gameStarted = true
                     GameScene.musicGame.run((SKAction.stop()))
-                    GameScene.playGameMusic(filename: StaticValue.backgroundMusicField, autoPlayLooped: true)
+                    playGameMusic(filename: StaticValue.backgroundMusicField, autoPlayLooped: true)
                     
                     Pony.physicsBody?.affectedByGravity = true
                     
@@ -73,28 +73,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     distanceBetweenWalls(distanceLength: 100.0)
                     ponyJumpFeatures(height: 150)
                     
+                    for touch in touches {
+                        let location = touch.location(in: self)
+                        if startStopMusicButton.contains(location) {
+                          muteMusic()
+                        }
+                    }
+                    
                 } else {
                     if died == true {
                         
                     } else {
                         ponyJumpFeatures(height: 150)
-                    }
-                }
-                
-                for touch in touches {
-                    let location = touch.location(in: self)
-                    if startStopMusicButton.contains(location) {
-                        if mute {
-                            //startStopMusicButton = SKSpriteNode(imageNamed: GameScene.soundImageField)
-                            mute = false
-                            GameScene.musicGame.run(SKAction.play())
-                            //musicGame.run(SKAction.changeVolume(to: 0, duration: 0.3))
-
-                        } else {
-                            
-                            mute = true
-                            GameScene.musicGame.run(SKAction.pause())
-                        }
                     }
                 }
             }
@@ -128,7 +118,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             GameScene.score += 1
             GameScene.scoreLabel.text = "\(GameScene.score)"
-            GameScene.playGameMusic(filename: StaticValue.scoreMusicField, autoPlayLooped: false)
+            playGameMusic(filename: StaticValue.scoreMusicField, autoPlayLooped: false)
             firstBody.node?.removeFromParent()
             
         } else if (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony) {
@@ -144,11 +134,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if died == false {
                 died = true
                 GameScene.musicGame.run((SKAction.stop()))
-                
-                //createRestartButton()
                 let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
                 let scene = GameOverScene(size: self.size)
                 self.view?.presentScene(scene, transition: reveal)
+                restartScene()
             }
         }
     }
@@ -207,13 +196,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func createStartButton() {
         startButton = SKSpriteNode(imageNamed: StaticValue.startBtnImageField )
-        startButton.size = CGSize(width: 200, height: 100)
+        startButton.size = CGSize(width: 150, height: 50)
         startButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
         startButton.zPosition = 4
         startButton.setScale(0)
         self.addChild(startButton)
         startButton.run(SKAction.scale(to: 1.0, duration: 0.3))
-        GameScene.playGameMusic(filename: StaticValue.startGameMusicField, autoPlayLooped: false)
+        playGameMusic(filename: StaticValue.startGameMusicField, autoPlayLooped: false)
     }
     
     func createStartStopMusicButton() {
@@ -307,31 +296,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(Pony)
     }
     
-    func longPressed(longPress: UILongPressGestureRecognizer) {
-        
-        if gameStarted == true {
-
-            Pony.physicsBody?.affectedByGravity = true
-            
-            let spawn = SKAction.run({
-                () in
-            })
-            
-            let delay = SKAction.wait(forDuration: 2.0)
-            let spawnDelay = SKAction.sequence([spawn,delay])
-            let spawnDelayForever = SKAction.repeatForever(spawnDelay)
-            self.run(spawnDelayForever)
-            
-            distanceBetweenWalls(distanceLength: 100.0)
-            ponyJumpFeatures(height: 90)
-        } else {
-            if died == true {
-                
-            } else {
-                ponyJumpFeatures(height: 90)
-            }
-        }
-    }
+//    func longPressed(longPress: UILongPressGestureRecognizer) {
+//        
+//        if gameStarted == true {
+//
+//            Pony.physicsBody?.affectedByGravity = true
+//            
+//            let spawn = SKAction.run({
+//                () in
+//            })
+//            
+//            let delay = SKAction.wait(forDuration: 2.0)
+//            let spawnDelay = SKAction.sequence([spawn,delay])
+//            let spawnDelayForever = SKAction.repeatForever(spawnDelay)
+//            self.run(spawnDelayForever)
+//            
+//            distanceBetweenWalls(distanceLength: 100.0)
+//            ponyJumpFeatures(height: 90)
+//        } else {
+//            if died == true {
+//                
+//            } else {
+//                ponyJumpFeatures(height: 90)
+//            }
+//        }
+//    }
     
     func distanceBetweenWalls(distanceLength: CGFloat) {
         
@@ -363,16 +352,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    public static func playGameMusic(filename: String, autoPlayLooped: Bool) {
+     func playGameMusic(filename: String, autoPlayLooped: Bool) {
         if let musicURL = Bundle.main.url(forResource: filename, withExtension: "mp3") {
             GameScene.musicGame = SKAudioNode(url: musicURL)
             GameScene.musicGame.autoplayLooped = autoPlayLooped
-            //GameScene.addChild(musicGame)
+            self.addChild(GameScene.musicGame)
             GameScene.musicGame.run(SKAction.play())
         } else {
             print("could not find file \(filename)")
             return
         }
-        
+    }
+    
+    func muteMusic() {
+        if mute {
+            //startStopMusicButton = SKSpriteNode(imageNamed: GameScene.soundImageField)
+            mute = false
+            GameScene.musicGame.run(SKAction.changeVolume(to: 1, duration: 0.3))
+            
+        } else {
+            mute = true
+            GameScene.musicGame.run(SKAction.changeVolume(to: 0, duration: 0.3))
+        }
     }
 }

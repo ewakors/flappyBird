@@ -76,15 +76,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     for touch in touches {
                         let location = touch.location(in: self)
                         if startStopMusicButton.contains(location) {
-                          muteMusic()
+                            muteMusic()
                         }
-                    }
-                    
+                    }                    
                 } else {
                     if died == true {
                         
                     } else {
                         ponyJumpFeatures(height: 150)
+                    }
+                }
+                
+                for touch in touches {
+                    let location = touch.location(in: self)
+                    if startStopMusicButton.contains(location) {
+                        muteMusic()
                     }
                 }
             }
@@ -191,12 +197,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         self.addChild(wall)
     }
-    
-
-    
+ 
     func createStartButton() {
         startButton = SKSpriteNode(imageNamed: StaticValue.startBtnImageField )
-        startButton.size = CGSize(width: 150, height: 50)
+        startButton.size = CGSize(width: 100, height: 50)
         startButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
         startButton.zPosition = 4
         startButton.setScale(0)

@@ -30,7 +30,6 @@ class GameOverScene: SKScene {
         for touch: AnyObject in touches {
             let location = touch.location(in: self)
             if restartButton.contains(location) {
-                //playGameMusic(filename: StaticValue.gameOverMusicField, autoPlayLooped: false)
                 let reveal: SKTransition = SKTransition.flipHorizontal(withDuration: 0.5)
                 let scene = GameScene(size: self.view!.bounds.size)
                 scene.scaleMode = .aspectFill
@@ -89,7 +88,7 @@ class GameOverScene: SKScene {
     
     func createRestartButton() {
         restartButton = SKSpriteNode(imageNamed: StaticValue.restartBtnImageField)
-        restartButton.size = CGSize(width: 150, height: 50)
+        restartButton.size = CGSize(width: 100, height: 50)
         restartButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 - 150)
         restartButton.zPosition = 6
         restartButton.setScale(0)

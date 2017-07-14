@@ -30,6 +30,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var Pony = SKSpriteNode()
     var startButton = SKSpriteNode()
     var startStopMusicButton = SKSpriteNode()
+    var startMusicButton = SKSpriteNode()
     var wall = SKNode()
     var moveAndRemove = SKAction()
     var gameStarted = Bool()
@@ -41,6 +42,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         createStartButton()
         createScene()
         saveHighScore(highScore: GameScene.score)
+        if mute == false {
+            createStartStopMusicButton()
+        }
+        else {
+            print("mugtemue neoeee")
+        }
 
         //let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(GameScene.longPressed(longPress:)))
         //self.view?.addGestureRecognizer(longGesture)
@@ -78,7 +85,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         if startStopMusicButton.contains(location) {
                             muteMusic()
                         }
-                    }                    
+                    }
                 } else {
                     if died == true {
                         
@@ -210,17 +217,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createStartStopMusicButton() {
-        if mute {
-            startStopMusicButton = SKSpriteNode(imageNamed: StaticValue.muteImageField)
-        } else {
-            startStopMusicButton = SKSpriteNode(imageNamed: StaticValue.soundImageField)
-        }
+        startMusicButton.removeFromParent()
+        startStopMusicButton = SKSpriteNode(imageNamed: StaticValue.muteImageField)
         startStopMusicButton.size = CGSize(width: 30, height: 30)
         startStopMusicButton.position = CGPoint(x: self.frame.width / 4 + 220 , y: self.frame.height / 4 + 400)
         startStopMusicButton.zPosition = 9
         startStopMusicButton.setScale(0)
         self.addChild(startStopMusicButton)
         startStopMusicButton.run(SKAction.scale(to: 1.0, duration: 0.3))
+    }
+    
+    func createStartMusicButton() {
+        startStopMusicButton.removeFromParent()
+        startMusicButton = SKSpriteNode(imageNamed: StaticValue.soundImageField)
+        startMusicButton.size = CGSize(width: 30, height: 30)
+        startMusicButton.position = CGPoint(x: self.frame.width / 4 + 220 , y: self.frame.height / 4 + 400)
+        startMusicButton.zPosition = 9
+        startMusicButton.setScale(0)
+        self.addChild(startMusicButton)
+        startMusicButton.run(SKAction.scale(to: 1.0, duration: 0.3))
     }
 
     func restartScene() {
@@ -246,9 +261,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             background.size = (self.view?.bounds.size)!
             self.addChild(background)
         }
-        
-        createStartStopMusicButton()
-        
+
+       
+        //createStartMusicButton()
+
         GameScene.scoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2.5 + self.frame.height / 2.5)
         GameScene.scoreLabel.text = "\(GameScene.score)"
         GameScene.scoreLabel.fontName = StaticValue.fontNameField
@@ -370,11 +386,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func muteMusic() {
         if mute {
-            //startStopMusicButton = SKSpriteNode(imageNamed: GameScene.soundImageField)
+            createStartStopMusicButton()
             mute = false
             GameScene.musicGame.run(SKAction.changeVolume(to: 1, duration: 0.3))
             
         } else {
+            createStartMusicButton()
             mute = true
             GameScene.musicGame.run(SKAction.changeVolume(to: 0, duration: 0.3))
         }

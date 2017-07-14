@@ -21,10 +21,7 @@ class GameOverScene: SKScene {
     override init(size: CGSize) {
         super.init(size: size)
         
-        self.backgroundColor = SKColor.yellow
-        
-        
-        
+        createBackground()
         createGameOverLabel()
         createScoreLabel()
         createHighScoreLabel()
@@ -43,26 +40,29 @@ class GameOverScene: SKScene {
             }
         }
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func createRestartButton() {
-        restartButton = SKSpriteNode(imageNamed: StaticValue.restartBtnImageField)
-        restartButton.size = CGSize(width: 150, height: 50)
-        restartButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 - 150)
-        restartButton.zPosition = 6
-        restartButton.setScale(0)
-        self.addChild(restartButton)
-        restartButton.run(SKAction.scale(to: 1.0, duration: 0.3))
+    func createBackground() {
+        for i in 0..<2 {
+            let background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
+            background.anchorPoint = CGPoint.zero
+            background.position = CGPoint(x: CGFloat(i) * self.frame.width, y: 0)
+            background.name = StaticValue.backgroundName
+            background.size = CGSize(width: self.frame.width, height: self.frame.height)
+            self.addChild(background)
+        }
     }
+   
     
     func createGameOverLabel() {
         gameOverLabel.fontName = StaticValue.fontNameField
         gameOverLabel.text = StaticValue.gameOverMessageField
         gameOverLabel.fontColor = SKColor.black
         gameOverLabel.fontSize = 60
+        gameOverLabel.zPosition = 1
         gameOverLabel.horizontalAlignmentMode = .center
         gameOverLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 + 100)
         self.addChild(gameOverLabel)
@@ -88,6 +88,16 @@ class GameOverScene: SKScene {
         highScoreLabel.fontColor = SKColor.black
         highScoreLabel.zPosition = 5
         self.addChild(highScoreLabel)
+    }
+    
+    func createRestartButton() {
+        restartButton = SKSpriteNode(imageNamed: StaticValue.restartBtnImageField)
+        restartButton.size = CGSize(width: 150, height: 50)
+        restartButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 - 150)
+        restartButton.zPosition = 6
+        restartButton.setScale(0)
+        self.addChild(restartButton)
+        restartButton.run(SKAction.scale(to: 1.0, duration: 0.3))
     }
     
 }

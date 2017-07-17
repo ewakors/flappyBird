@@ -20,6 +20,7 @@ class StaticValue: SKScene {
     static let scoreMusicField = "scoreMusic"
     static let coinImageField = "coinHeart"
     static let wallImageField = "Wall"
+    static let transparentWallImageField = "transparentWall"
     static let startBtnImageField = "playButton"
     static let backgroundImageField = "Background2"
     static let fontNameField = "FlappyBirdy"

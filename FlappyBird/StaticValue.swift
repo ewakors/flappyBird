@@ -24,6 +24,7 @@ class StaticValue: SKScene {
     static let backgroundImageField = "Background2"
     static let fontNameField = "FlappyBirdy"
     static let groundImageField = "Ground"
+    static let ceilingImageField = "Ceiling"
     static let ponyImageField = "Kucyk"
     static let muteImageField = "Mute"
     static let soundImageField = "Sound"
@@ -31,5 +32,4 @@ class StaticValue: SKScene {
     static let restartBtnImageField = "RestartBtn"
     static let gameOverMusicField = "gameOverMusic"
     
-
 }

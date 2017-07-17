@@ -20,10 +20,14 @@ public extension CGFloat {
         return CGFloat.random() * (max - min) + min
     }
     
-    public static func staticHeight(wallHeight: CGFloat) -> CGFloat {
-        return wallHeight
+    public static func staticWallWidth(wallWidth: CGFloat) -> CGFloat {
+        return wallWidth
     }
     
+    public static func staticWallHeight(wallHeight: CGFloat) -> CGFloat {
+        return wallHeight
+    }
+  
     public static func staticDictance(distanceBetweenWalls: CGFloat) -> CGFloat {
         return distanceBetweenWalls
     }

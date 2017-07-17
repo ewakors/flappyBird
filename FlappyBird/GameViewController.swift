@@ -11,10 +11,20 @@ import SpriteKit
 
 class GameViewController: UIViewController {
 
+    let duration = 3.0
+    let distanceBetweenWalls = 100.0
+    let widthWall = 50.0
+    let heightWall = 100.0
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if let scene = GameScene(fileNamed:"GameScene") {
+            
+            scene.startGame(duration: 1.0, distanceBetweenWalls: CGFloat(distanceBetweenWalls), widthWall: CGFloat(widthWall), heightWall: CGFloat(heightWall))
+           
+            
+            //scene.startGame(duration: 3.0, distanceBetweenWalls: 100.0, widthWall: 50.0, heightWall: 50.0)
             // Configure the view.
             let skView = self.view as! SKView
             skView.showsFPS = true
@@ -28,6 +38,8 @@ class GameViewController: UIViewController {
             scene.size = self.view.bounds.size
             
             skView.presentScene(scene)
+            
+            scene.restartScene(duration: 2.0, distanceBetweenWalls: CGFloat(distanceBetweenWalls), widthWall: CGFloat(widthWall), heightWall: CGFloat(heightWall))
         }
     }
 

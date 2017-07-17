@@ -21,9 +21,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     static var score = Int()
     static var highScore = Int()
+    static var musicGame = SKAudioNode()
     static let scoreLabel = SKLabelNode()
     static let highScoreLabel = SKLabelNode()
-    static var musicGame = SKAudioNode()
+    
     
     var Ground = SKSpriteNode()
     var Ceiling = SKSpriteNode()
@@ -36,20 +37,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameStarted = Bool()
     var died = Bool()
     var mute: Bool = false
+    var duration = CFTimeInterval()
+    var distanceBetweenWalls = CGFloat()
+    var widthWall = CGFloat()
+    var heightWall = CGFloat()
     let startLabel = SKLabelNode()
-    
+    var movePipes = SKAction()
+
     override func didMove(to view: SKView) {
         createStartButton()
         createScene()
         saveHighScore(highScore: GameScene.score)
-       
-
-        //let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(GameScene.longPressed(longPress:)))
-        //self.view?.addGestureRecognizer(longGesture)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-       
+
         for touch: AnyObject in touches {
             let location = touch.location(in: self)
             if startButton.contains(location) {
@@ -63,7 +65,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                     Pony.physicsBody?.affectedByGravity = true
 
-                    distanceBetweenWalls(duration: 3.0, distanceLength: 100.0)
+                    distanceBetweenWalls(duration: duration, distanceLength: distanceBetweenWalls)
                     ponyJumpFeatures(height: 150)
                     
                     for touch in touches {
@@ -99,7 +101,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     (node, error) in
                     
                     let background = node as! SKSpriteNode
-                    // 20 - speeder background
                     background.position = CGPoint(x: background.position.x - 2, y: background.position.y)
                     
                     if background.position.x <= -background.size.width {
@@ -127,6 +128,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             enumerateChildNodes(withName: StaticValue.wallName, using: ({
                 (node, error) in
                 
+                
                 node.speed = 0
                 self.removeAllActions()
                 
@@ -140,7 +142,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.view?.presentScene(scene, transition: reveal)
                 restartScene()
             }
+        } else if (firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Ground) {
+            distanceBetweenWalls(duration: 0.0,distanceLength: 0.0)
         }
+    }
+    
+    func startGame(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat) {
+        self.duration = duration
+        self.distanceBetweenWalls = distanceBetweenWalls
+        self.widthWall = widthWall
+        self.heightWall = heightWall
     }
     
     func createWalls() {
@@ -160,25 +171,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         wall.name = StaticValue.wallName
 
         let bottomWall = SKSpriteNode(imageNamed: StaticValue.wallImageField)
-       
-        createBottomWall(bottomWall: bottomWall, bottomWidth: 150)
+        createBottomWall(bottomWall: bottomWall, bottomWidth: widthWall)
         
         wall.addChild(bottomWall)
         wall.zPosition = 1
         
-        if GameScene.score < 3 {
-            let height = CGFloat.staticHeight(wallHeight: 20)
-            wall.position.y = wall.position.y + height
-            scoreNode.position.y = scoreNode.position.y + height
-        } else if GameScene.score >= 3 && GameScene.score < 6 {
-            let height = CGFloat.staticHeight(wallHeight: 40)
-            wall.position.y = wall.position.y + height
-            scoreNode.position.y = scoreNode.position.y + height
-        } else {
-            let height = CGFloat.random(min: 0,max: 200)
-            wall.position.y = wall.position.y + height
-            scoreNode.position.y = scoreNode.position.y + height / 2
-        }
+//        if GameScene.score < 3 {
+//            let height = CGFloat.staticWallHeight(wallHeight: 20)
+//            let width = CGFloat.staticWallWidth(wallWidth: widthWall)
+//            wall.position.y = wall.position.y + height
+//            bottomWall.size.width = width
+//            scoreNode.position.y = scoreNode.position.y + height
+//        } else if GameScene.score >= 3 && GameScene.score < 6 {
+//            let height = CGFloat.staticWallHeight(wallHeight: 40)
+//            let width = CGFloat.staticWallWidth(wallWidth: 70)
+//            bottomWall.size.width = width
+//            wall.position.y = wall.position.y + height
+//            bottomWall.size.width = 200
+//            scoreNode.position.y = scoreNode.position.y + height
+//        } else {
+//            let height = CGFloat.random(min: 0,max: 200)
+//            let width = CGFloat.staticWallWidth(wallWidth: 70)
+//            bottomWall.size.width = width
+//            wall.position.y = wall.position.y + height
+//            scoreNode.position.y = scoreNode.position.y + height / 2
+//        }
 
         wall.addChild(scoreNode)
         wall.run(moveAndRemove)
@@ -242,6 +259,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         createScene()
     }
     
+    func restartScene(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat) {
+        self.removeAllChildren()
+        self.removeAllActions()
+        died = false
+        gameStarted = false
+        saveHighScore(highScore: GameScene.score)
+        GameScene.score = 0
+        createStartButton()
+        createScene()
+        self.duration = duration
+        self.distanceBetweenWalls = distanceBetweenWalls
+        self.widthWall = widthWall
+        self.heightWall = heightWall
+    }
+    
     func createScene() {
 
         self.physicsWorld.contactDelegate = self
@@ -284,7 +316,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createCeilingScene() {
-        Ceiling = SKSpriteNode(imageNamed: StaticValue.groundImageField)
+        Ceiling = SKSpriteNode(imageNamed: StaticValue.ceilingImageField)
         Ceiling.setScale(0.5)
         Ceiling.position = CGPoint(x: self.frame.width / 2, y: 0 + Ceiling.frame.height / 2 + 650)
         Ceiling.physicsBody = SKPhysicsBody(rectangleOf: Ceiling.size)
@@ -325,32 +357,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         Pony.zPosition = 2
         self.addChild(Pony)
     }
-//    func longPressed(longPress: UILongPressGestureRecognizer) {
-//        
-//        if gameStarted == true {
-//
-//            Pony.physicsBody?.affectedByGravity = true
-//            
-//            let spawn = SKAction.run({
-//                () in
-//            })
-//            
-//            let delay = SKAction.wait(forDuration: 2.0)
-//            let spawnDelay = SKAction.sequence([spawn,delay])
-//            let spawnDelayForever = SKAction.repeatForever(spawnDelay)
-//            self.run(spawnDelayForever)
-//            
-//            distanceBetweenWalls(distanceLength: 100.0)
-//            ponyJumpFeatures(height: 90)
-//        } else {
-//            if died == true {
-//                
-//            } else {
-//                ponyJumpFeatures(height: 90)
-//            }
-//        }
-//    }
-    
+
     func distanceBetweenWalls(duration: CFTimeInterval, distanceLength: CGFloat) {
         
         let spawn = SKAction.run({
@@ -364,9 +371,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.run(spawnDelayForever)
         
         let distance = CGFloat(self.frame.width + wall.frame.width)
-        // 0.004 - faster
-        //let movePipes = SKAction.moveBy(x: -distance - 50, y: 100, duration: TimeInterval(0.008 * distance)) - move pipes
-        let movePipes = SKAction.moveBy(x: -distance - distanceLength, y: 0, duration: TimeInterval(0.008 * distance))
+        movePipes = SKAction.moveBy(x: -distance - distanceLength, y: 0, duration: TimeInterval(0.008 * distance))
         let removePipes = SKAction.removeFromParent()
         moveAndRemove = SKAction.sequence([movePipes,removePipes])
     }

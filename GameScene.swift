@@ -160,15 +160,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         wall.name = StaticValue.wallName
 
         let bottomWall = SKSpriteNode(imageNamed: StaticValue.wallImageField)
-
-        bottomWall.setScale(0.5)
-        bottomWall.physicsBody = SKPhysicsBody(rectangleOf: bottomWall.size)
-        bottomWall.physicsBody?.categoryBitMask = PhysicsCategory.Wall
-        bottomWall.physicsBody?.collisionBitMask = PhysicsCategory.Pony
-        bottomWall.physicsBody?.contactTestBitMask = PhysicsCategory.Pony
-        bottomWall.physicsBody?.affectedByGravity = false
-        bottomWall.physicsBody?.isDynamic = false
-        bottomWall.position = CGPoint(x: self.frame.width + 25 , y: self.frame.height / 2 - 450)
+       
+        createBottomWall(bottomWall: bottomWall, bottomWidth: 150)
         
         wall.addChild(bottomWall)
         wall.zPosition = 1
@@ -193,6 +186,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(wall)
     }
  
+    func createBottomWall(bottomWall: SKSpriteNode, bottomWidth: CGFloat) {
+        bottomWall.setScale(0.5)
+        bottomWall.size.width = bottomWidth
+        bottomWall.physicsBody = SKPhysicsBody(rectangleOf: bottomWall.size)
+        bottomWall.physicsBody?.categoryBitMask = PhysicsCategory.Wall
+        bottomWall.physicsBody?.collisionBitMask = PhysicsCategory.Pony
+        bottomWall.physicsBody?.contactTestBitMask = PhysicsCategory.Pony
+        bottomWall.physicsBody?.affectedByGravity = false
+        bottomWall.physicsBody?.isDynamic = false
+        bottomWall.position = CGPoint(x: self.frame.width + 25, y: self.frame.height / 2 - 450)
+    }
+    
     func createStartButton() {
         startButton = SKSpriteNode(imageNamed: StaticValue.startBtnImageField )
         startButton.size = CGSize(width: 100, height: 50)

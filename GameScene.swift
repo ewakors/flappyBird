@@ -62,25 +62,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     playGameMusic(filename: StaticValue.backgroundMusicField, autoPlayLooped: true)
                     
                     Pony.physicsBody?.affectedByGravity = true
-                    
-                    let spawn = SKAction.run({
-                        () in
-                        self.createWalls()
-                    })
-                    
-                    let delay = SKAction.wait(forDuration: 2.0)
-                    let spawnDelay = SKAction.sequence([spawn,delay])
-                    let spawnDelayForever = SKAction.repeatForever(spawnDelay)
-                    self.run(spawnDelayForever)
-                    
-                    distanceBetweenWalls(distanceLength: 100.0)
+
+                    distanceBetweenWalls(duration: 3.0, distanceLength: 100.0)
                     ponyJumpFeatures(height: 150)
                     
                     for touch in touches {
                         let location = touch.location(in: self)
                         if stopMusicButton.contains(location) {
                             muteMusic()
-                            print("\(mute)")
                         }
                     }
                 } else {
@@ -88,7 +77,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         
                     } else {
                         ponyJumpFeatures(height: 150)
-                       
                     }
                 }
                 
@@ -358,7 +346,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        }
 //    }
     
-    func distanceBetweenWalls(distanceLength: CGFloat) {
+    func distanceBetweenWalls(duration: CFTimeInterval, distanceLength: CGFloat) {
+        
+        let spawn = SKAction.run({
+            () in
+            self.createWalls()
+        })
+        
+        let delay = SKAction.wait(forDuration: duration)
+        let spawnDelay = SKAction.sequence([spawn,delay])
+        let spawnDelayForever = SKAction.repeatForever(spawnDelay)
+        self.run(spawnDelayForever)
         
         let distance = CGFloat(self.frame.width + wall.frame.width)
         // 0.004 - faster
@@ -370,7 +368,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func ponyJumpFeatures(height: CGFloat) {
         Pony.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        Pony.physicsBody?.applyImpulse(CGVector(dx: 1, dy: 150))
+        Pony.physicsBody?.applyImpulse(CGVector(dx: 0, dy: height))
     }
     
     func saveHighScore(highScore:Int){

@@ -160,13 +160,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        }
 //        else if (firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Ground) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony)  {
 //        }
+        
+        else if (firstBody.categoryBitMask == PhysicsCategory.LeftFrame && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.LeftFrame) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony)  {
+        }
     }
     
 
     
     func ponyJumpFeatures(height: CGFloat) {
         Pony.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        Pony.physicsBody?.applyImpulse(CGVector(dx: 3, dy: height))
+        Pony.physicsBody?.applyImpulse(CGVector(dx: 10, dy: height))
     }
     
     func startGame(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat) {
@@ -177,7 +180,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func timerEvent(sender: Any) {
-        let height = CGFloat.random(min: 0,max: 0)
+        let height = CGFloat.random(min: 0,max: 10)
         ponyJumpFeatures(height: height)
     }
     
@@ -202,28 +205,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         createBottomWall(bottomWall: bottomWall, bottomWidth: widthWall)
         
         wall.addChild(bottomWall)
-        wall.zPosition = 1
-        
-//        if GameScene.score < 3 {
-//            let height = CGFloat.staticWallHeight(wallHeight: 20)
-//            let width = CGFloat.staticWallWidth(wallWidth: widthWall)
-//            wall.position.y = wall.position.y + height
-//            bottomWall.size.width = width
-//            scoreNode.position.y = scoreNode.position.y + height
-//        } else if GameScene.score >= 3 && GameScene.score < 6 {
-//            let height = CGFloat.staticWallHeight(wallHeight: 40)
-//            let width = CGFloat.staticWallWidth(wallWidth: 70)
-//            bottomWall.size.width = width
-//            wall.position.y = wall.position.y + height
-//            bottomWall.size.width = 200
-//            scoreNode.position.y = scoreNode.position.y + height
-//        } else {
-//            let height = CGFloat.random(min: 0,max: 200)
-//            let width = CGFloat.staticWallWidth(wallWidth: 70)
-//            bottomWall.size.width = width
-//            wall.position.y = wall.position.y + height
-//            scoreNode.position.y = scoreNode.position.y + height / 2
-//        }
+
+        if GameScene.score < 3 {
+            let height = CGFloat.staticWallHeight(wallHeight: 20)
+            let width = CGFloat.staticWallWidth(wallWidth: widthWall)
+            wall.position.y = wall.position.y + height
+            bottomWall.size.width = width
+            scoreNode.position.y = scoreNode.position.y + height
+        } else if GameScene.score >= 3 && GameScene.score < 6 {
+            let height = CGFloat.staticWallHeight(wallHeight: 40)
+            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 10)
+            bottomWall.size.width = width
+            wall.position.y = wall.position.y + height
+            bottomWall.size.width = width
+            scoreNode.position.y = scoreNode.position.y + height
+        } else {
+            let height = CGFloat.random(min: 0,max: 200)
+            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 20)
+            bottomWall.size.width = width
+            wall.position.y = wall.position.y + height
+            scoreNode.position.y = scoreNode.position.y + height / 2
+        }
 
         wall.addChild(scoreNode)
         wall.addChild(transparentWall)
@@ -343,9 +345,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         createGameScene()
         createCeilingScene()
-        createFrameScene()
         createGroundScene()
         createPony()
+        createFrameScene()
+
     }
     
     func createGameScene() {
@@ -379,9 +382,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createFrameScene() {
+
         RightFrame = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         RightFrame.setScale(0.5)
-        RightFrame.size = CGSize(width: 3, height: self.frame.height)
+        RightFrame.size = CGSize(width: 65, height: self.frame.height)
         RightFrame.position = CGPoint(x: self.frame.width ,y: self.frame.height / 2)
         RightFrame.physicsBody = SKPhysicsBody(rectangleOf: RightFrame.size)
         RightFrame.physicsBody?.categoryBitMask = PhysicsCategory.RightFrame
@@ -389,20 +393,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         RightFrame.physicsBody?.contactTestBitMask = PhysicsCategory.Pony
         RightFrame.physicsBody?.affectedByGravity = false
         RightFrame.physicsBody?.isDynamic = false
-        RightFrame.zPosition = 9
+        RightFrame.zPosition = 3
         self.addChild(RightFrame)
         
         LeftFrame = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         LeftFrame.setScale(0.5)
-        LeftFrame.size = CGSize(width: 3, height: self.frame.height)
+        LeftFrame.size = CGSize(width: 65, height: self.frame.height)
         LeftFrame.position = CGPoint(x: self.frame.width - self.frame.width ,y: self.frame.height / 2)
         LeftFrame.physicsBody = SKPhysicsBody(rectangleOf: LeftFrame.size)
-        LeftFrame.physicsBody?.categoryBitMask = PhysicsCategory.LeftFrame
+        LeftFrame.physicsBody?.categoryBitMask = PhysicsCategory.Wall
         LeftFrame.physicsBody?.collisionBitMask = PhysicsCategory.Pony
         LeftFrame.physicsBody?.contactTestBitMask = PhysicsCategory.Pony
         LeftFrame.physicsBody?.affectedByGravity = false
         LeftFrame.physicsBody?.isDynamic = false
-        LeftFrame.zPosition = 9
+        LeftFrame.zPosition = 3
         self.addChild(LeftFrame)
     }
     
@@ -424,7 +428,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         Pony = SKSpriteNode(imageNamed: StaticValue.ponyImageField )
         Pony.size = CGSize(width: 70, height: 80)
         Pony.position = CGPoint(x: self.frame.width / 2 - Pony.frame.width, y: self.frame.height / 2)
-        Pony.physicsBody = SKPhysicsBody(circleOfRadius: Pony.frame.height / 2)
+        Pony.physicsBody = SKPhysicsBody(circleOfRadius: Pony.size.height / 2)
         Pony.physicsBody?.categoryBitMask = PhysicsCategory.Pony
         Pony.physicsBody?.collisionBitMask = PhysicsCategory.Ground | PhysicsCategory.Wall | PhysicsCategory.Ceiling | PhysicsCategory.LeftFrame | PhysicsCategory.RightFrame
         Pony.physicsBody?.contactTestBitMask = PhysicsCategory.Ground | PhysicsCategory.Wall | PhysicsCategory.Score | PhysicsCategory.Ceiling | PhysicsCategory.LeftFrame | PhysicsCategory.RightFrame

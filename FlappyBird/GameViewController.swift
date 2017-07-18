@@ -22,19 +22,17 @@ class GameViewController: UIViewController {
         
         if let scene = GameScene(fileNamed:"GameScene") {
 
-            
-            
             scene.startGame(duration: duration, distanceBetweenWalls: CGFloat(distanceBetweenWalls), widthWall: CGFloat(widthWall), heightWall: CGFloat(heightWall))
             scene.startGameTimer(timeInterval: 0.5, repeats: true)
             // Configure the view.
             let skView = self.view as! SKView
             skView.showsFPS = true
             skView.showsNodeCount = true
-            
-          // let gameTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(scene.timerEvent), userInfo: nil, repeats: true)
+
             
             /* Sprite Kit applies additional optimizations to improve rendering performance */
             skView.ignoresSiblingOrder = true
+            //scene.constraints = SKConstraint.positionX(SKRange(constantValue: size.width/2.0))
             
             /* Set the scale mode to scale to fit the window */
             scene.scaleMode = .aspectFill
@@ -46,8 +44,6 @@ class GameViewController: UIViewController {
             skView.presentScene(scene)
         }
     }
-    
-
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

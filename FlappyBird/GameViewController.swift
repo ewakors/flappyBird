@@ -21,8 +21,7 @@ class GameViewController: UIViewController {
         
         if let scene = GameScene(fileNamed:"GameScene") {
             
-            scene.startGame(duration: 1.0, distanceBetweenWalls: CGFloat(distanceBetweenWalls), widthWall: CGFloat(widthWall), heightWall: CGFloat(heightWall))
-           
+            scene.startGame(duration: duration, distanceBetweenWalls: CGFloat(distanceBetweenWalls), widthWall: CGFloat(widthWall), heightWall: CGFloat(heightWall))
             
             //scene.startGame(duration: 3.0, distanceBetweenWalls: 100.0, widthWall: 50.0, heightWall: 50.0)
             // Configure the view.
@@ -35,11 +34,12 @@ class GameViewController: UIViewController {
             
             /* Set the scale mode to scale to fit the window */
             scene.scaleMode = .aspectFill
+            
+            scene.userData = NSMutableDictionary()
+            scene.userData?.setObject(distanceBetweenWalls , forKey: "gameInfo" as NSCopying)
             scene.size = self.view.bounds.size
             
             skView.presentScene(scene)
-            
-            scene.restartScene(duration: 2.0, distanceBetweenWalls: CGFloat(distanceBetweenWalls), widthWall: CGFloat(widthWall), heightWall: CGFloat(heightWall))
         }
     }
 

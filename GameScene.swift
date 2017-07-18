@@ -47,33 +47,40 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var heightWall = CGFloat()
     let startLabel = SKLabelNode()
     var movePipes = SKAction()
-    var gameTimer: Timer!
+    var gameTimer = Timer()
+    var timeInterval = TimeInterval()
+    var repeats = Bool()
 
     override func didMove(to view: SKView) {
-        gameTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(timerEvent), userInfo: nil, repeats: true)
+        
+        gameTimer.invalidate()
         createStartButton()
         createScene()
         saveHighScore(highScore: GameScene.score)
+    }
+    
+    func timerEvent(sender: Any) {
+        let height = CGFloat.random(min: 0,max: 150)
+        ponyJumpFeatures(height: height)
+    }
+    
+    func startGameTimer(timeInterval: TimeInterval, repeats: Bool) {
+        self.timeInterval = timeInterval
+        self.repeats = repeats
+        self.gameTimer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(timerEvent), userInfo: nil, repeats: repeats)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
         for touch: AnyObject in touches {
             let location = touch.location(in: self)
-      
-            if background.contains(location) {
-                if gamePaused == true {
-                    //gameStarted = true
-                    gamePaused = false
-                    self.scene?.isPaused = false
-                }
-            }
-            
             if startButton.contains(location) {
                 if gameStarted == false {
+                    
                     startButton.removeFromParent()
                     startButton.size = CGSize(width: self.frame.width, height: self.frame.height)
 
+                    startGameTimer(timeInterval: timeInterval, repeats: repeats)
                     gameStarted = true
                     GameScene.musicGame.run((SKAction.stop()))
                     playGameMusic(filename: StaticValue.backgroundMusicField, autoPlayLooped: true)
@@ -160,21 +167,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //            }
 //        }
 //        else if (firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Ground) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony)  {
-//            self.scene?.isPaused = true
-//            GameScene.musicGame.run((SKAction.stop()))
-//            playGameMusic(filename: StaticValue.backgroundMusicField, autoPlayLooped: true)
-//            gamePaused = true
 //        }
     }
     
-    func timerEvent(sender: Any) {
-        let height = CGFloat.random(min: 0,max: 150)
-        ponyJumpFeatures(height: height)
-    }
+
     
     func ponyJumpFeatures(height: CGFloat) {
         Pony.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        Pony.physicsBody?.applyImpulse(CGVector(dx: 0, dy: height))
+        Pony.physicsBody?.applyImpulse(CGVector(dx: 0.3, dy: height))
     }
     
     func startGame(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat) {

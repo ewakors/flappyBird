@@ -14,6 +14,8 @@ struct PhysicsCategory {
     static let Ground: UInt32 = 0x1 << 2
     static let Wall: UInt32 = 0x1 << 3
     static let Score: UInt32 = 0x1 << 4
+    static let TransparentWall: UInt32 = 0x1 << 5
+    static let Background: UInt32 = 0x1 << 6
     static let Ceiling: UInt32 = 0x1 << 7
 }
 
@@ -25,26 +27,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     static let scoreLabel = SKLabelNode()
     static let highScoreLabel = SKLabelNode()
     
-    
     var Ground = SKSpriteNode()
     var Ceiling = SKSpriteNode()
     var Pony = SKSpriteNode()
+    var background = SKSpriteNode()
     var startButton = SKSpriteNode()
     var stopMusicButton = SKSpriteNode()
     var startMusicButton = SKSpriteNode()
     var wall = SKNode()
     var moveAndRemove = SKAction()
     var gameStarted = Bool()
+    var gamePaused: Bool = false
     var died = Bool()
     var mute: Bool = false
+    var click: Bool = false
     var duration = CFTimeInterval()
     var distanceBetweenWalls = CGFloat()
     var widthWall = CGFloat()
     var heightWall = CGFloat()
     let startLabel = SKLabelNode()
     var movePipes = SKAction()
+    var gameTimer: Timer!
 
     override func didMove(to view: SKView) {
+        gameTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(timerEvent), userInfo: nil, repeats: true)
         createStartButton()
         createScene()
         saveHighScore(highScore: GameScene.score)
@@ -54,6 +60,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         for touch: AnyObject in touches {
             let location = touch.location(in: self)
+      
+            if background.contains(location) {
+                if gamePaused == true {
+                    //gameStarted = true
+                    gamePaused = false
+                    self.scene?.isPaused = false
+                }
+            }
+            
             if startButton.contains(location) {
                 if gameStarted == false {
                     startButton.removeFromParent()
@@ -84,6 +99,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 for touch in touches {
                     let location = touch.location(in: self)
+                    
                     if stopMusicButton.contains(location) {
                         muteMusic()
                     }
@@ -100,11 +116,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 enumerateChildNodes(withName: StaticValue.backgroundName, using: ({
                     (node, error) in
                     
-                    let background = node as! SKSpriteNode
-                    background.position = CGPoint(x: background.position.x - 2, y: background.position.y)
+                    self.background = node as! SKSpriteNode
+                    self.background.position = CGPoint(x: self.background.position.x - 2, y: self.background.position.y)
                     
-                    if background.position.x <= -background.size.width {
-                        background.position = CGPoint(x: background.position.x + background.size.width * 2,y: background.position.y)
+                    if self.background.position.x <= -self.background.size.width {
+                        self.background.position = CGPoint(x: self.background.position.x + self.background.size.width * 2,y: self.background.position.y)
                     }
                 }))
             }
@@ -116,35 +132,49 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let firstBody = contact.bodyA
         let secondBody = contact.bodyB
         
-        if (firstBody.categoryBitMask == PhysicsCategory.Score && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Score) {
+        if (firstBody.categoryBitMask == PhysicsCategory.Score && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Score) || (firstBody.categoryBitMask == PhysicsCategory.TransparentWall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.TransparentWall) {
             
             GameScene.score += 1
             GameScene.scoreLabel.text = "\(GameScene.score)"
             playGameMusic(filename: StaticValue.scoreMusicField, autoPlayLooped: false)
             firstBody.node?.removeFromParent()
             
-        } else if (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony) {
-            
-            enumerateChildNodes(withName: StaticValue.wallName, using: ({
-                (node, error) in
-                
-                
-                node.speed = 0
-                self.removeAllActions()
-                
-            }))
-            
-            if died == false {
-                died = true
-                GameScene.musicGame.run((SKAction.stop()))
-                let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-                let scene = GameOverScene(size: self.size)
-                self.view?.presentScene(scene, transition: reveal)
-                restartScene()
-            }
-        } else if (firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Ground) {
-            distanceBetweenWalls(duration: 0.0,distanceLength: 0.0)
         }
+//        else if (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony) {
+//            
+//            enumerateChildNodes(withName: StaticValue.wallName, using: ({
+//                (node, error) in
+//    
+//                node.speed = 0
+//                self.removeAllActions()
+//                
+//            }))
+//            
+//            if died == false {
+//                died = true
+//                GameScene.musicGame.run((SKAction.stop()))
+//                let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+//                let scene = GameOverScene(size: self.size)
+//                self.view?.presentScene(scene, transition: reveal)
+//                restartScene()
+//            }
+//        }
+//        else if (firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Ground) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony)  {
+//            self.scene?.isPaused = true
+//            GameScene.musicGame.run((SKAction.stop()))
+//            playGameMusic(filename: StaticValue.backgroundMusicField, autoPlayLooped: true)
+//            gamePaused = true
+//        }
+    }
+    
+    func timerEvent(sender: Any) {
+        let height = CGFloat.random(min: 0,max: 150)
+        ponyJumpFeatures(height: height)
+    }
+    
+    func ponyJumpFeatures(height: CGFloat) {
+        Pony.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        Pony.physicsBody?.applyImpulse(CGVector(dx: 0, dy: height))
     }
     
     func startGame(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat) {
@@ -157,16 +187,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func createWalls() {
         
         let scoreNode = SKSpriteNode(imageNamed: StaticValue.coinImageField)
-        scoreNode.size = CGSize(width: 50, height: 50)
-        scoreNode.position = CGPoint(x: self.frame.width + 25, y: self.frame.height / 2 - 170)
-        scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
-        scoreNode.physicsBody?.affectedByGravity = false
-        scoreNode.physicsBody?.isDynamic = false
-        scoreNode.physicsBody?.categoryBitMask = PhysicsCategory.Score
-        scoreNode.physicsBody?.collisionBitMask = 0
-        scoreNode.physicsBody?.contactTestBitMask = PhysicsCategory.Pony
-        scoreNode.color = SKColor.blue
+        let transparentWall = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         
+        createTransparentWall(transparentWall: transparentWall)
+        createCoin(scoreNode: scoreNode)
+
         wall = SKNode()
         wall.name = StaticValue.wallName
 
@@ -198,6 +223,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        }
 
         wall.addChild(scoreNode)
+        wall.addChild(transparentWall)
         wall.run(moveAndRemove)
         
         self.addChild(wall)
@@ -213,6 +239,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bottomWall.physicsBody?.affectedByGravity = false
         bottomWall.physicsBody?.isDynamic = false
         bottomWall.position = CGPoint(x: self.frame.width + 25, y: self.frame.height / 2 - 450)
+    }
+    
+    func createTransparentWall(transparentWall: SKSpriteNode) {
+        transparentWall.size = CGSize(width: 3, height: self.frame.height)
+        transparentWall.position = CGPoint(x: self.frame.width + 25, y: self.frame.height / 2 - 170)
+        transparentWall.physicsBody = SKPhysicsBody(rectangleOf: transparentWall.size)
+        transparentWall.physicsBody?.affectedByGravity = false
+        transparentWall.physicsBody?.isDynamic = false
+        transparentWall.physicsBody?.categoryBitMask = PhysicsCategory.TransparentWall
+        transparentWall.physicsBody?.collisionBitMask = 0
+        transparentWall.physicsBody?.contactTestBitMask = PhysicsCategory.Pony
+    }
+    
+    func createCoin(scoreNode: SKSpriteNode) {
+        scoreNode.size = CGSize(width: 50, height: 50)
+        scoreNode.position = CGPoint(x: self.frame.width + 50 , y: self.frame.height / 2 - 170)
+        scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
+        scoreNode.physicsBody?.affectedByGravity = false
+        scoreNode.physicsBody?.isDynamic = false
+        scoreNode.physicsBody?.categoryBitMask = PhysicsCategory.Score
+        scoreNode.physicsBody?.collisionBitMask = 0
+        scoreNode.physicsBody?.contactTestBitMask = PhysicsCategory.Pony
     }
     
     func createStartButton() {
@@ -268,10 +316,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         GameScene.score = 0
         createStartButton()
         createScene()
-        self.duration = duration
-        self.distanceBetweenWalls = distanceBetweenWalls
-        self.widthWall = widthWall
-        self.heightWall = heightWall
     }
     
     func createScene() {
@@ -279,7 +323,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.contactDelegate = self
         
         for i in 0..<2 {
-            let background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
+            background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
             background.anchorPoint = CGPoint.zero
             background.position = CGPoint(x: CGFloat(i) * self.frame.width, y: 0)
             background.name = StaticValue.backgroundName
@@ -374,11 +418,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         movePipes = SKAction.moveBy(x: -distance - distanceLength, y: 0, duration: TimeInterval(0.008 * distance))
         let removePipes = SKAction.removeFromParent()
         moveAndRemove = SKAction.sequence([movePipes,removePipes])
-    }
-    
-    func ponyJumpFeatures(height: CGFloat) {
-        Pony.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        Pony.physicsBody?.applyImpulse(CGVector(dx: 0, dy: height))
     }
     
     func saveHighScore(highScore:Int){

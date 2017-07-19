@@ -54,6 +54,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameTimer = Timer()
     var timeInterval = TimeInterval()
     var repeats = Bool()
+    
+    var scoreNode = SKSpriteNode()
+    var bottomWall = SKSpriteNode()
+    var actionCreateBottomWall = SKAction()
+    
+    func timerEvent(sender: Any) {
+        
+        let height = CGFloat.random(min: 0,max: 120)
+        ponyJumpFeatures(height: height)
+        
+        print("\(height)")
+    }
 
     override func didMove(to view: SKView) {
         gameTimer.invalidate()
@@ -158,18 +170,62 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //                restartScene()
 //            }
 //        }
-//        else if (firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Ground) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony)  {
-//        }
-        
-        else if (firstBody.categoryBitMask == PhysicsCategory.LeftFrame && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.LeftFrame) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony)  {
+        else if (firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Ground) {
+            
+            enumerateChildNodes(withName: StaticValue.backgroundName, using: ({
+                (node, error) in
+
+                node.speed = 0
+                self.gamePaused = true
+                
+
+            }))
+        }
+        else if (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony)  {
+            
+            enumerateChildNodes(withName: StaticValue.wallName, using: ({
+                (node, error) in
+                
+                node.speed = 0
+                self.gamePaused = true
+                self.bottomWall.removeFromParent()
+            }))
+        }
+        else {
+            self.gamePaused = false
         }
     }
     
+    func distanceBetweenWalls(duration: CFTimeInterval, distanceLength: CGFloat) {
+        
+        let spawn = SKAction.run({
+            () in
+            if self.gamePaused == false {
+                self.createWalls()
+                self.bottomWall.isPaused = false
+                print("\(self.gamePaused)")
+            } else {
+                print("dupa")
+                self.gamePaused = false
+                self.bottomWall.isPaused = true
+                
+            }
+        })
+        
+        let delay = SKAction.wait(forDuration: duration)
+        let spawnDelay = SKAction.sequence([spawn,delay])
+        let spawnDelayForever = SKAction.repeatForever(spawnDelay)
+        self.run(spawnDelayForever)
+        
+        let distance = CGFloat(self.frame.width + wall.frame.width)
+        movePipes = SKAction.moveBy(x: -distance - distanceLength, y: 0, duration: TimeInterval(0.008 * distance))
+        let removePipes = SKAction.removeFromParent()
+        moveAndRemove = SKAction.sequence([movePipes,removePipes])
+    }
 
-    
     func ponyJumpFeatures(height: CGFloat) {
         Pony.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        Pony.physicsBody?.applyImpulse(CGVector(dx: 10, dy: height))
+        Pony.physicsBody?.applyImpulse(CGVector(dx: 0, dy: height))
     }
     
     func startGame(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat) {
@@ -178,12 +234,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.widthWall = widthWall
         self.heightWall = heightWall
     }
-    
-    func timerEvent(sender: Any) {
-        let height = CGFloat.random(min: 0,max: 10)
-        ponyJumpFeatures(height: height)
-    }
-    
+
     func startGameTimer(timeInterval: TimeInterval, repeats: Bool) {
         self.timeInterval = timeInterval
         self.repeats = repeats
@@ -192,48 +243,60 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func createWalls() {
         
-        let scoreNode = SKSpriteNode(imageNamed: StaticValue.coinImageField)
-        let transparentWall = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
-        
-        createTransparentWall(transparentWall: transparentWall)
-        createCoin(scoreNode: scoreNode)
-
         wall = SKNode()
         wall.name = StaticValue.wallName
+        wall.zPosition = 1
 
-        let bottomWall = SKSpriteNode(imageNamed: StaticValue.wallImageField)
-        createBottomWall(bottomWall: bottomWall, bottomWidth: widthWall)
-        
-        wall.addChild(bottomWall)
-
-        if GameScene.score < 3 {
-            let height = CGFloat.staticWallHeight(wallHeight: 20)
-            let width = CGFloat.staticWallWidth(wallWidth: widthWall)
-            wall.position.y = wall.position.y + height
-            bottomWall.size.width = width
-            scoreNode.position.y = scoreNode.position.y + height
-        } else if GameScene.score >= 3 && GameScene.score < 6 {
-            let height = CGFloat.staticWallHeight(wallHeight: 40)
-            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 10)
-            bottomWall.size.width = width
-            wall.position.y = wall.position.y + height
-            bottomWall.size.width = width
-            scoreNode.position.y = scoreNode.position.y + height
-        } else {
-            let height = CGFloat.random(min: 0,max: 200)
-            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 20)
-            bottomWall.size.width = width
-            wall.position.y = wall.position.y + height
-            scoreNode.position.y = scoreNode.position.y + height / 2
+        scoreNode = SKSpriteNode(imageNamed: StaticValue.coinImageField)
+        let actionCreateCoin = SKAction.run {
+            self.createCoin(scoreNode: self.scoreNode)
         }
+        //wall.addChild(self.scoreNode)
+        //let action = SKAction.group([actionCreateCoin])
+        scoreNode.run(actionCreateCoin, withKey: "actionCreateCoin")
 
-        wall.addChild(scoreNode)
+        
+        bottomWall = SKSpriteNode(imageNamed: StaticValue.wallImageField)
+        actionCreateBottomWall = SKAction.run {
+            self.createBottomWall(bottomWall: self.bottomWall, bottomWidth: self.widthWall)
+        }
+    
+        wall.addChild(bottomWall)
+        bottomWall.run(actionCreateBottomWall, withKey: "actionCreateBottomWall")
+       
+        
+        let transparentWall = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
+        createTransparentWall(transparentWall: transparentWall)
         wall.addChild(transparentWall)
+
+//        if GameScene.score < 6 {
+//            let height = CGFloat.staticWallHeight(wallHeight: 20)
+//            let width = CGFloat.staticWallWidth(wallWidth: widthWall)
+//            wall.position.y = wall.position.y + height
+//            bottomWall.size.width = width
+//            scoreNode.position.y = scoreNode.position.y + height
+//        } else if GameScene.score >= 6 && GameScene.score < 10 {
+//            let height = CGFloat.staticWallHeight(wallHeight: 40)
+//            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 10)
+//            bottomWall.size.width = width
+//            wall.position.y = wall.position.y + height
+//            bottomWall.size.width = width
+//            scoreNode.position.y = scoreNode.position.y + height
+//        } else {
+//            let height = CGFloat.random(min: 0,max: 200)
+//            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 20)
+//            bottomWall.size.width = width
+//            wall.position.y = wall.position.y + height
+//            scoreNode.position.y = scoreNode.position.y + height / 2
+//        }
+
+       
         wall.run(moveAndRemove)
         
         self.addChild(wall)
     }
  
+    
     func createBottomWall(bottomWall: SKSpriteNode, bottomWidth: CGFloat) {
         bottomWall.setScale(0.5)
         bottomWall.size.width = bottomWidth
@@ -347,7 +410,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         createCeilingScene()
         createGroundScene()
         createPony()
-        createFrameScene()
+       // createFrameScene()
 
     }
     
@@ -382,7 +445,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createFrameScene() {
-
         RightFrame = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         RightFrame.setScale(0.5)
         RightFrame.size = CGSize(width: 65, height: self.frame.height)
@@ -438,23 +500,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(Pony)
     }
 
-    func distanceBetweenWalls(duration: CFTimeInterval, distanceLength: CGFloat) {
-        
-        let spawn = SKAction.run({
-            () in
-            self.createWalls()
-        })
-        
-        let delay = SKAction.wait(forDuration: duration)
-        let spawnDelay = SKAction.sequence([spawn,delay])
-        let spawnDelayForever = SKAction.repeatForever(spawnDelay)
-        self.run(spawnDelayForever)
-        
-        let distance = CGFloat(self.frame.width + wall.frame.width)
-        movePipes = SKAction.moveBy(x: -distance - distanceLength, y: 0, duration: TimeInterval(0.008 * distance))
-        let removePipes = SKAction.removeFromParent()
-        moveAndRemove = SKAction.sequence([movePipes,removePipes])
-    }
+   
     
     func saveHighScore(highScore:Int){
         if let currentHighScore:Int = UserDefaults.standard.value(forKey: StaticValue.highScoreField) as? Int{

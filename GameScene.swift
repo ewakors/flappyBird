@@ -50,26 +50,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var heightWall = CGFloat()
     let startLabel = SKLabelNode()
     var movePipes = SKAction()
-    static var gameTimer = Timer()
-    var timeInterval = TimeInterval()
-    var repeats = Bool()
-    
+    var gameTimer = Timer()
     var scoreNode = SKSpriteNode()
     var bottomWall = SKSpriteNode()
     var actionCreateBottomWall = SKAction()
-    
-    
-    func timerEvent(sender: Any) {
-        
-        let height = CGFloat.random(min: 0,max: 100)
-        ponyJumpFeatures(height: height)
-    }
 
     override func didMove(to view: SKView) {
-        GameScene.gameTimer.invalidate()
         createStartButton()
         createScene()
         saveHighScore(highScore: GameScene.score)
+        gameTimer.invalidate()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -82,7 +72,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     startButton.removeFromParent()
                     startButton.size = CGSize(width: self.frame.width, height: self.frame.height)
 
-                    startGameTimer(timeInterval: timeInterval, repeats: repeats)
+                    //startGameTimer(gameTimer: gameTimer)
                     gameStarted = true
                     GameScene.musicGame.run((SKAction.stop()))
                    // playGameMusic(filename: StaticValue.backgroundMusicField, autoPlayLooped: true)
@@ -164,8 +154,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
                 let scene = GameOverScene(size: self.size)
                 self.view?.presentScene(scene, transition: reveal)
-                restartScene()
                 self.removeAllChildren()
+                gameTimer.invalidate()
             }
         }
     }
@@ -193,19 +183,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         Pony.physicsBody?.applyImpulse(CGVector(dx: 0, dy: height))
     }
     
-    func startGame(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat) {
+    func startGame(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat ) {
         self.duration = duration
         self.distanceBetweenWalls = distanceBetweenWalls
         self.widthWall = widthWall
         self.heightWall = heightWall
+        self.gameTimer.invalidate()
     }
 
-    func startGameTimer(timeInterval: TimeInterval, repeats: Bool) {
-        self.timeInterval = timeInterval
-        self.repeats = repeats
-        GameScene.gameTimer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(timerEvent), userInfo: nil, repeats: repeats)
+    func startGameTimer(gameTimer: Timer) {
+
+        if gameStarted == true {
+            self.gameTimer = gameTimer
+        }
+        
+        if died == true {
+            self.gameTimer.invalidate()
+        }
     }
-    
+ 
     func createWalls() {
         
         wall = SKNode()
@@ -223,7 +219,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         bottomWall = SKSpriteNode(imageNamed: StaticValue.wallImageField)
         actionCreateBottomWall = SKAction.run {
-            self.createBottomWall(bottomWall: self.bottomWall, bottomWidth: self.widthWall)
+            self.createBottomWall(bottomWall: self.bottomWall, bottomWidth: self.widthWall, bottomHeight:  self.heightWall)
         }
     
         wall.addChild(bottomWall)
@@ -259,19 +255,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         wall.run(moveAndRemove)
         
         self.addChild(wall)
-    }
- 
+    } 
     
-    func createBottomWall(bottomWall: SKSpriteNode, bottomWidth: CGFloat) {
+    func createBottomWall(bottomWall: SKSpriteNode, bottomWidth: CGFloat, bottomHeight: CGFloat) {
         bottomWall.setScale(0.5)
-        bottomWall.size.width = bottomWidth
+        bottomWall.size = CGSize(width: bottomWidth, height: bottomHeight)
         bottomWall.physicsBody = SKPhysicsBody(rectangleOf: bottomWall.size)
         bottomWall.physicsBody?.categoryBitMask = PhysicsCategory.Wall
         bottomWall.physicsBody?.collisionBitMask = PhysicsCategory.Pony
         bottomWall.physicsBody?.contactTestBitMask = PhysicsCategory.Pony
         bottomWall.physicsBody?.affectedByGravity = false
         bottomWall.physicsBody?.isDynamic = false
-        bottomWall.position = CGPoint(x: self.frame.width + 25, y: self.frame.height / 2 - 450)
+        bottomWall.position = CGPoint(x: self.frame.width + 25, y: self.frame.height - self.frame.height  )
     }
     
     func createTransparentWall(transparentWall: SKSpriteNode) {
@@ -394,14 +389,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func createFrameScene() {
         Ceiling = SKSpriteNode(imageNamed: StaticValue.ceilingImageField)
         Ceiling.setScale(0.5)
-        Ceiling.position = CGPoint(x: self.frame.width / 2, y: 0 + Ceiling.frame.height / 2 + 650)
+        Ceiling.size = CGSize(width: self.frame.width, height: 5)
+        Ceiling.position = CGPoint(x: self.frame.width / 2, y: self.frame.height )
         Ceiling.physicsBody = SKPhysicsBody(rectangleOf: Ceiling.size)
         Ceiling.physicsBody?.categoryBitMask = PhysicsCategory.Ceiling
         Ceiling.physicsBody?.collisionBitMask = PhysicsCategory.Pony
         Ceiling.physicsBody?.contactTestBitMask = PhysicsCategory.Pony
         Ceiling.physicsBody?.affectedByGravity = false
         Ceiling.physicsBody?.isDynamic = false
-        Ceiling.zRotation = CGFloat(M_PI)
         Ceiling.zPosition = 7
         self.addChild(Ceiling)
         
@@ -434,7 +429,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         Ground = SKSpriteNode(imageNamed: StaticValue.groundImageField)
         Ground.setScale(0.5)
-        Ground.position = CGPoint(x: self.frame.width / 2, y: 0 + Ground.frame.height / 2)
+        Ground.position = CGPoint(x: self.frame.width / 2, y: self.frame.height - self.frame.height)
         Ground.physicsBody = SKPhysicsBody(rectangleOf: Ground.size)
         Ground.physicsBody?.categoryBitMask = PhysicsCategory.Ground
         Ground.physicsBody?.collisionBitMask = PhysicsCategory.Pony

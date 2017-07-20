@@ -59,12 +59,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var bottomWall = SKSpriteNode()
     var actionCreateBottomWall = SKAction()
     
+    
     func timerEvent(sender: Any) {
         
-        let height = CGFloat.random(min: 0,max: 120)
+        let height = CGFloat.random(min: 0,max: 50)
         ponyJumpFeatures(height: height)
-        
-        print("\(height)")
     }
 
     override func didMove(to view: SKView) {
@@ -170,25 +169,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //                restartScene()
 //            }
 //        }
-        else if (firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Ground) {
-            
-            enumerateChildNodes(withName: StaticValue.backgroundName, using: ({
-                (node, error) in
-
-                node.speed = 0
-                self.gamePaused = true
-                
-
-            }))
-        }
+//        else if (firstBody.categoryBitMask == PhysicsCategory.Ground && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Ground) {
+//            
+//            enumerateChildNodes(withName: StaticValue.backgroundName, using: ({
+//                (node, error) in
+//
+//                node.speed = 0
+//                self.gamePaused = true
+//                
+//
+//            }))
+//        }
         else if (firstBody.categoryBitMask == PhysicsCategory.Pony && secondBody.categoryBitMask == PhysicsCategory.Wall || firstBody.categoryBitMask == PhysicsCategory.Wall && secondBody.categoryBitMask == PhysicsCategory.Pony) || (firstBody.categoryBitMask == PhysicsCategory.Pony)  {
             
             enumerateChildNodes(withName: StaticValue.wallName, using: ({
                 (node, error) in
                 
-                node.speed = 0
-                self.gamePaused = true
-                self.bottomWall.removeFromParent()
+
+                    node.speed = 0
+                    self.gamePaused = true
+
             }))
         }
         else {
@@ -201,14 +201,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let spawn = SKAction.run({
             () in
             if self.gamePaused == false {
+                self.wall.speed = 1
                 self.createWalls()
-                self.bottomWall.isPaused = false
                 print("\(self.gamePaused)")
-            } else {
+            }
+            else {
                 print("dupa")
                 self.gamePaused = false
-                self.bottomWall.isPaused = true
-                
+                //self.bottomWall.run(self.movePipes)
             }
         })
         
@@ -225,7 +225,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     func ponyJumpFeatures(height: CGFloat) {
         Pony.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        Pony.physicsBody?.applyImpulse(CGVector(dx: 0, dy: height))
+        Pony.physicsBody?.applyImpulse(CGVector(dx: 2, dy: height))
     }
     
     func startGame(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat) {
@@ -407,11 +407,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
 
         createGameScene()
-        createCeilingScene()
-        createGroundScene()
         createPony()
-       // createFrameScene()
-
+        createFrameScene()
     }
     
     func createGameScene() {
@@ -429,7 +426,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(GameScene.highScoreLabel)
     }
     
-    func createCeilingScene() {
+    func createFrameScene() {
         Ceiling = SKSpriteNode(imageNamed: StaticValue.ceilingImageField)
         Ceiling.setScale(0.5)
         Ceiling.position = CGPoint(x: self.frame.width / 2, y: 0 + Ceiling.frame.height / 2 + 650)
@@ -442,12 +439,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         Ceiling.zRotation = CGFloat(M_PI)
         Ceiling.zPosition = 7
         self.addChild(Ceiling)
-    }
-    
-    func createFrameScene() {
+        
         RightFrame = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         RightFrame.setScale(0.5)
-        RightFrame.size = CGSize(width: 65, height: self.frame.height)
+        RightFrame.size = CGSize(width: 5, height: self.frame.height)
         RightFrame.position = CGPoint(x: self.frame.width ,y: self.frame.height / 2)
         RightFrame.physicsBody = SKPhysicsBody(rectangleOf: RightFrame.size)
         RightFrame.physicsBody?.categoryBitMask = PhysicsCategory.RightFrame
@@ -460,7 +455,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         LeftFrame = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         LeftFrame.setScale(0.5)
-        LeftFrame.size = CGSize(width: 65, height: self.frame.height)
+        LeftFrame.size = CGSize(width: 5, height: self.frame.height)
         LeftFrame.position = CGPoint(x: self.frame.width - self.frame.width ,y: self.frame.height / 2)
         LeftFrame.physicsBody = SKPhysicsBody(rectangleOf: LeftFrame.size)
         LeftFrame.physicsBody?.categoryBitMask = PhysicsCategory.Wall
@@ -470,9 +465,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         LeftFrame.physicsBody?.isDynamic = false
         LeftFrame.zPosition = 3
         self.addChild(LeftFrame)
-    }
-    
-    func createGroundScene() {
+        
         Ground = SKSpriteNode(imageNamed: StaticValue.groundImageField)
         Ground.setScale(0.5)
         Ground.position = CGPoint(x: self.frame.width / 2, y: 0 + Ground.frame.height / 2)
@@ -500,8 +493,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(Pony)
     }
 
-   
-    
     func saveHighScore(highScore:Int){
         if let currentHighScore:Int = UserDefaults.standard.value(forKey: StaticValue.highScoreField) as? Int{
             GameScene.highScoreLabel.text = "\(StaticValue.highScoreTextField) \(currentHighScore)"

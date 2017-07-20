@@ -13,6 +13,7 @@ class StaticValue: SKScene {
     
     static let wallName = "wallPair"
     static let backgroundName = "background"
+    static let leftFrame = "leftFrame"
     static let highScoreField = "highScoreLabel"
     static let highScoreTextField = "High score:"
     static let startGameMusicField = "startGameMusic"

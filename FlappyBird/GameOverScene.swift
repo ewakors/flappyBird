@@ -18,7 +18,7 @@ class GameOverScene: SKScene {
     
     override init(size: CGSize) {
         super.init(size: size)
- 
+        
         createBackground()
         createGameOverLabel()
         createScoreLabel()
@@ -30,10 +30,14 @@ class GameOverScene: SKScene {
         for touch: AnyObject in touches {
             let location = touch.location(in: self)
             if restartButton.contains(location) {
-                let reveal: SKTransition = SKTransition.flipHorizontal(withDuration: 0.5)
-                let scene = GameScene(size: self.view!.bounds.size)
+                GameScene.gameTimer.invalidate()
+                let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+                let scene = GameScene(size: self.size)
                 scene.scaleMode = .aspectFill
                 self.view?.presentScene(scene, transition: reveal)
+                print("game scene")
+
+                //GameScene.createScene(GameScene)
             }
         }
     }

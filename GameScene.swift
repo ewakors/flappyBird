@@ -44,22 +44,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var died = Bool()
     var mute: Bool = false
     var click: Bool = false
-    var duration = CFTimeInterval()
-    var distanceBetweenWalls = CGFloat()
-    var widthWall = CGFloat()
-    var heightWall = CGFloat()
+    var duration: CFTimeInterval = CFTimeInterval(UserDefaults.standard.float(forKey: StaticValue.durationField))
+    var distanceBetweenWalls: CGFloat = CGFloat(UserDefaults.standard.float(forKey: StaticValue.distanceBetweenWallsField))
+    var widthWall: CGFloat = CGFloat(UserDefaults.standard.float(forKey: StaticValue.widthWallField))
+    var heightWall: CGFloat = CGFloat(UserDefaults.standard.float(forKey: StaticValue.heightWallField))
+    var heightPonyJump: CGFloat = CGFloat(UserDefaults.standard.float(forKey: StaticValue.heightPonyJumpField))
     let startLabel = SKLabelNode()
     var movePipes = SKAction()
-    var gameTimer = Timer()
+    //var gameTimer = Timer()
+    var gameTimer: Timer? = UserDefaults.standard.value(forKey: StaticValue.gameTimerField) as? Timer
     var scoreNode = SKSpriteNode()
     var bottomWall = SKSpriteNode()
     var actionCreateBottomWall = SKAction()
 
     override func didMove(to view: SKView) {
+       
         createStartButton()
         createScene()
         saveHighScore(highScore: GameScene.score)
-        gameTimer.invalidate()
+        
+        /*gameTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block:
+            {(gameTimer) in
+            if self.gameStarted == true {
+                let heightPonyJump = CGFloat.random(min: 0,max: 100)
+                
+                self.ponyJumpFeatures(heightPonyJump: heightPonyJump)
+                self.startGameTimer(gameTimer: gameTimer)
+            }
+        })*/
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -71,8 +83,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                     startButton.removeFromParent()
                     startButton.size = CGSize(width: self.frame.width, height: self.frame.height)
-
-                    //startGameTimer(gameTimer: gameTimer)
                     gameStarted = true
                     GameScene.musicGame.run((SKAction.stop()))
                    // playGameMusic(filename: StaticValue.backgroundMusicField, autoPlayLooped: true)
@@ -80,7 +90,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     Pony.physicsBody?.affectedByGravity = true
 
                     distanceBetweenWalls(duration: duration, distanceLength: distanceBetweenWalls)
-                    ponyJumpFeatures(height: 150)
+                    ponyJumpFeatures(heightPonyJump: heightPonyJump)
                     
                     for touch in touches {
                         let location = touch.location(in: self)
@@ -92,7 +102,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     if died == true {
                         
                     } else {
-                        ponyJumpFeatures(height: 150)
+                        ponyJumpFeatures(heightPonyJump: heightPonyJump)
                     }
                 }
                 
@@ -146,16 +156,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
                 node.speed = 0
                 self.removeAllActions()
+                //self.gameTimer.invalidate()
             }))
             
             if died == false {
                 died = true
-                GameScene.musicGame.run((SKAction.stop()))
-                let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-                let scene = GameOverScene(size: self.size)
-                self.view?.presentScene(scene, transition: reveal)
-                self.removeAllChildren()
-                gameTimer.invalidate()
+                
+                restartScene()                
             }
         }
     }
@@ -178,9 +185,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         moveAndRemove = SKAction.sequence([movePipes,removePipes])
     }
 
-    func ponyJumpFeatures(height: CGFloat) {
+    func ponyJumpFeatures(heightPonyJump: CGFloat) {
+        self.heightPonyJump = heightPonyJump
+        UserDefaults.standard.set(heightPonyJump, forKey: StaticValue.heightPonyJumpField)
+        UserDefaults.standard.synchronize()
         Pony.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        Pony.physicsBody?.applyImpulse(CGVector(dx: 0, dy: height))
+        Pony.physicsBody?.applyImpulse(CGVector(dx: 0, dy: heightPonyJump))
     }
     
     func startGame(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat ) {
@@ -188,18 +198,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.distanceBetweenWalls = distanceBetweenWalls
         self.widthWall = widthWall
         self.heightWall = heightWall
-        self.gameTimer.invalidate()
+        
+        UserDefaults.standard.set(duration, forKey: StaticValue.durationField)
+        UserDefaults.standard.synchronize()
+        UserDefaults.standard.set(distanceBetweenWalls, forKey: StaticValue.distanceBetweenWallsField)
+        UserDefaults.standard.synchronize()
+        UserDefaults.standard.set(widthWall, forKey: StaticValue.widthWallField)
+        UserDefaults.standard.synchronize()
+        UserDefaults.standard.set(heightWall, forKey: StaticValue.heightWallField)
+        UserDefaults.standard.synchronize()
     }
 
     func startGameTimer(gameTimer: Timer) {
-
-        if gameStarted == true {
-            self.gameTimer = gameTimer
-        }
-        
-        if died == true {
-            self.gameTimer.invalidate()
-        }
+        self.gameTimer = gameTimer
+        //UserDefaults.standard.set(gameTimer, forKey: "gameTimer")
+        //UserDefaults.standard.synchronize()
     }
  
     func createWalls() {
@@ -213,8 +226,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.createCoin(scoreNode: self.scoreNode)
         }
         //wall.addChild(self.scoreNode)
-        //let action = SKAction.group([actionCreateCoin])
-        scoreNode.run(actionCreateCoin, withKey: "actionCreateCoin")
+        scoreNode.run(actionCreateCoin, withKey: StaticValue.actionCreateCoinField)
 
         
         bottomWall = SKSpriteNode(imageNamed: StaticValue.wallImageField)
@@ -223,8 +235,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     
         wall.addChild(bottomWall)
-        bottomWall.run(actionCreateBottomWall, withKey: "actionCreateBottomWall")
-       
+        bottomWall.run(actionCreateBottomWall, withKey: StaticValue.actionCreateBottomWallField)
         
         let transparentWall = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         createTransparentWall(transparentWall: transparentWall)
@@ -266,7 +277,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bottomWall.physicsBody?.contactTestBitMask = PhysicsCategory.Pony
         bottomWall.physicsBody?.affectedByGravity = false
         bottomWall.physicsBody?.isDynamic = false
-        bottomWall.position = CGPoint(x: self.frame.width + 25, y: self.frame.height - self.frame.height  )
+        bottomWall.zRotation(M_PI / 4)
+        bottomWall.position = CGPoint(x: self.frame.width + 25, y: self.frame.height)
     }
     
     func createTransparentWall(transparentWall: SKSpriteNode) {
@@ -292,7 +304,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createStartButton() {
-        startButton = SKSpriteNode(imageNamed: StaticValue.startBtnImageField )
+        startButton = SKSpriteNode(imageNamed: StaticValue.startBtnImageField)
         startButton.size = CGSize(width: 100, height: 50)
         startButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
         startButton.zPosition = 4
@@ -325,25 +337,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     func restartScene() {
+        GameScene.musicGame.run((SKAction.stop()))
+        let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+        let scene = GameOverScene(size: self.size)
+        self.view?.presentScene(scene, transition: reveal)
+        
         self.removeAllChildren()
         self.removeAllActions()
         died = false
         gameStarted = false
         saveHighScore(highScore: GameScene.score)
         GameScene.score = 0
-        createStartButton()
-        createScene()
-    }
-    
-    func restartScene(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat) {
-        self.removeAllChildren()
-        self.removeAllActions()
-        died = false
-        gameStarted = false
-        saveHighScore(highScore: GameScene.score)
-        GameScene.score = 0
-        createStartButton()
-        createScene()
     }
     
     func createScene() {
@@ -378,7 +382,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         GameScene.scoreLabel.fontSize = 40
         GameScene.scoreLabel.zPosition = 5
         self.addChild(GameScene.scoreLabel)
-        
         GameScene.highScoreLabel.position = CGPoint(x: self.frame.width / 3, y: self.frame.height / 2 + self.frame.height / 2.5)
         GameScene.highScoreLabel.fontName = StaticValue.fontNameField
         GameScene.highScoreLabel.fontSize = 40
@@ -454,7 +457,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(Pony)
     }
 
-    func saveHighScore(highScore:Int){
+    func saveHighScore(highScore:Int) {
         if let currentHighScore:Int = UserDefaults.standard.value(forKey: StaticValue.highScoreField) as? Int{
             GameScene.highScoreLabel.text = "\(StaticValue.highScoreTextField) \(currentHighScore)"
             GameScene.highScore = currentHighScore
@@ -470,7 +473,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
      func playGameMusic(filename: String, autoPlayLooped: Bool) {
-        if let musicURL = Bundle.main.url(forResource: filename, withExtension: "mp3") {
+        if let musicURL = Bundle.main.url(forResource: filename, withExtension: StaticValue.musicFileExtensionFiled) {
             GameScene.musicGame = SKAudioNode(url: musicURL)
             GameScene.musicGame.autoplayLooped = autoPlayLooped
             self.addChild(GameScene.musicGame)

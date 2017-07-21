@@ -33,5 +33,14 @@ class StaticValue: SKScene {
     static let gameOverMessageField = "Game over"
     static let restartBtnImageField = "RestartBtn"
     static let gameOverMusicField = "gameOverMusic"
+    static let durationField = "duration"
+    static let distanceBetweenWallsField = "distanceBetweenWalls"
+    static let widthWallField = "widthWall"
+    static let heightWallField = "heightWall"
+    static let heightPonyJumpField = "heightPonyJump"
+    static let gameTimerField = "gameTimer"
+    static let actionCreateCoinField = "actionCreateCoin"
+    static let actionCreateBottomWallField = "actionCreateBottomWall"
+    static let musicFileExtensionFiled = "mp3"
     
 }

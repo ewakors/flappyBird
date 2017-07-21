@@ -15,19 +15,14 @@ class GameOverScene: SKScene {
     let scoreLabel = SKLabelNode()
     let highScoreLabel = SKLabelNode()
     var restartButton = SKSpriteNode()
-    var duration = CFTimeInterval()
-    var distanceBetweenWalls = CGFloat()
-    var widthWall = CGFloat()
-    var heightWall = CGFloat()
     
     override init(size: CGSize) {
         super.init(size: size)
-        
         createBackground()
         createGameOverLabel()
         createScoreLabel()
         createHighScoreLabel()
-        createRestartButton()
+        createRestartButton()       
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -38,20 +33,12 @@ class GameOverScene: SKScene {
                 let scene = GameScene(size: self.size)
                 scene.scaleMode = .aspectFill
                 self.view?.presentScene(scene, transition: reveal)
-                
             }
         }
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    func startGame(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat) {
-        self.duration = duration
-        self.distanceBetweenWalls = distanceBetweenWalls
-        self.widthWall = widthWall
-        self.heightWall = heightWall
     }
     
     func createBackground() {

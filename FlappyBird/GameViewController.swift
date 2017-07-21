@@ -18,8 +18,6 @@ class GameViewController: UIViewController {
     var gameTimer = Timer()
     var timeInterval = 0.5
 
-
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,31 +26,28 @@ class GameViewController: UIViewController {
             gameTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block:
                 {(gameTimer) in
                     if scene.gameStarted == true {
-                    let height = CGFloat.random(min: 0,max: 150)
-                    scene.ponyJumpFeatures(height: height)
-                    print("\(height)")
-                    } else {
+                        let heightPonyJump = CGFloat.random(min: 0,max: 100)
                         
+                        scene.ponyJumpFeatures(heightPonyJump: heightPonyJump)
+                        scene.startGameTimer(gameTimer: gameTimer)
+                        print("\(heightPonyJump)")
                     }
             })
    
             scene.startGame(duration: duration, distanceBetweenWalls: CGFloat(distanceBetweenWalls), widthWall: scene.frame.width / 20, heightWall: CGFloat(heightWall))
-            scene.startGameTimer(gameTimer: gameTimer)
             
             let skView = self.view as! SKView
             skView.showsFPS = true
             skView.showsNodeCount = true
             skView.ignoresSiblingOrder = true
             scene.scaleMode = .aspectFill
-            scene.userData = NSMutableDictionary()
-           // scene.userData?.setObject(gameTimer , forKey: "gameTimer" as NSCopying)
             scene.size = self.view.bounds.size
             
             skView.presentScene(scene)
             
-        } 
+        }
     }
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

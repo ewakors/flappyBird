@@ -97,11 +97,11 @@ class GameOverScene: SKScene {
     }
     
     func playGameMusic(filename: String, autoPlayLooped: Bool) {
-        if let musicURL = Bundle.main.url(forResource: filename, withExtension: "mp3") {
+        if let musicURL = Bundle.main.url(forResource: filename, withExtension: StaticValue.musicFileExtensionFiled) {
             GameScene.musicGame = SKAudioNode(url: musicURL)
             GameScene.musicGame.autoplayLooped = autoPlayLooped
             self.addChild(GameScene.musicGame)
-            GameScene.musicGame.run(SKAction.play())
+            GameScene.musicGame.run(SKAction.stop())
         } else {
             print("could not find file \(filename)")
             return

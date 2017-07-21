@@ -90,7 +90,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     Pony.physicsBody?.affectedByGravity = true
 
                     distanceBetweenWalls(duration: duration, distanceLength: distanceBetweenWalls)
-                    ponyJumpFeatures(heightPonyJump: heightPonyJump)
+                    ponyJumpFeatures(heightPonyJump: 150)
                     
                     for touch in touches {
                         let location = touch.location(in: self)
@@ -102,7 +102,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     if died == true {
                         
                     } else {
-                        ponyJumpFeatures(heightPonyJump: heightPonyJump)
+                        ponyJumpFeatures(heightPonyJump: 150)
                     }
                 }
                 
@@ -225,13 +225,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let actionCreateCoin = SKAction.run {
             self.createCoin(scoreNode: self.scoreNode)
         }
-        //wall.addChild(self.scoreNode)
+        wall.addChild(self.scoreNode)
         scoreNode.run(actionCreateCoin, withKey: StaticValue.actionCreateCoinField)
 
         
         bottomWall = SKSpriteNode(imageNamed: StaticValue.wallImageField)
         actionCreateBottomWall = SKAction.run {
-            self.createBottomWall(bottomWall: self.bottomWall, bottomWidth: self.widthWall, bottomHeight:  self.heightWall)
+            self.createBottomWall(bottomWall: self.bottomWall, bottomWidth: self.widthWall, bottomHeight: self.heightWall )
         }
     
         wall.addChild(bottomWall)
@@ -242,27 +242,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         wall.addChild(transparentWall)
 
         if GameScene.score < 6 {
-            let height = CGFloat.staticWallHeight(wallHeight: 20)
-            let width = CGFloat.staticWallWidth(wallWidth: widthWall)
-            wall.position.y = wall.position.y + height
-            bottomWall.size.width = width
-            scoreNode.position.y = scoreNode.position.y + height
+            bottomWall.size.width = widthWall
+            wall.position.y = wall.position.y
+           // scoreNode.position.y = scoreNode.position.y + height
         } else if GameScene.score >= 6 && GameScene.score < 10 {
             let height = CGFloat.staticWallHeight(wallHeight: 40)
             let width = CGFloat.staticWallWidth(wallWidth: widthWall + 10)
-            bottomWall.size.width = width
             wall.position.y = wall.position.y + height
             bottomWall.size.width = width
             scoreNode.position.y = scoreNode.position.y + height
         } else {
-            let height = CGFloat.random(min: 0,max: 200)
+            let height = CGFloat.random(min: 0,max: 400)
             let width = CGFloat.staticWallWidth(wallWidth: widthWall + 20)
             bottomWall.size.width = width
             wall.position.y = wall.position.y + height
             scoreNode.position.y = scoreNode.position.y + height / 2
         }
-       
-        wall.zPosition = 1
+
         wall.run(moveAndRemove)
         
         self.addChild(wall)
@@ -270,20 +266,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func createBottomWall(bottomWall: SKSpriteNode, bottomWidth: CGFloat, bottomHeight: CGFloat) {
         bottomWall.setScale(0.5)
-        bottomWall.size = CGSize(width: bottomWidth, height: bottomHeight)
+        bottomWall.size.width = bottomWidth
         bottomWall.physicsBody = SKPhysicsBody(rectangleOf: bottomWall.size)
         bottomWall.physicsBody?.categoryBitMask = PhysicsCategory.Wall
         bottomWall.physicsBody?.collisionBitMask = PhysicsCategory.Pony
         bottomWall.physicsBody?.contactTestBitMask = PhysicsCategory.Pony
         bottomWall.physicsBody?.affectedByGravity = false
         bottomWall.physicsBody?.isDynamic = false
-        bottomWall.zRotation(M_PI / 4)
-        bottomWall.position = CGPoint(x: self.frame.width + 25, y: self.frame.height)
+        bottomWall.position = CGPoint(x: self.frame.width + 25, y: self.frame.height - self.frame.height * 1.35 + bottomHeight)
     }
     
     func createTransparentWall(transparentWall: SKSpriteNode) {
         transparentWall.size = CGSize(width: 3, height: self.frame.height)
-        transparentWall.position = CGPoint(x: self.frame.width + 25, y: self.frame.height / 2)
+        transparentWall.position = CGPoint(x: self.frame.width + 25, y: (self.view?.bounds.size.height)! / 2)
         transparentWall.physicsBody = SKPhysicsBody(rectangleOf: transparentWall.size)
         transparentWall.physicsBody?.affectedByGravity = false
         transparentWall.physicsBody?.isDynamic = false
@@ -293,8 +288,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createCoin(scoreNode: SKSpriteNode) {
-        scoreNode.size = CGSize(width: 50, height: 50)
-        scoreNode.position = CGPoint(x: self.frame.width + 50 , y: self.frame.height / 2 - 170)
+        scoreNode.size = CGSize(width: 150, height: 50)
+        scoreNode.position = CGPoint(x: self.frame.width + 25 , y: bottomWall.position.y)
         scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
         scoreNode.physicsBody?.affectedByGravity = false
         scoreNode.physicsBody?.isDynamic = false
@@ -311,7 +306,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         startButton.setScale(0)
         self.addChild(startButton)
         startButton.run(SKAction.scale(to: 1.0, duration: 0.3))
-        playGameMusic(filename: StaticValue.startGameMusicField, autoPlayLooped: false)
+        //playGameMusic(filename: StaticValue.startGameMusicField, autoPlayLooped: false)
     }
     
     func createStopMusicButton() {
@@ -477,7 +472,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             GameScene.musicGame = SKAudioNode(url: musicURL)
             GameScene.musicGame.autoplayLooped = autoPlayLooped
             self.addChild(GameScene.musicGame)
-            GameScene.musicGame.run(SKAction.play())
+            GameScene.musicGame.run(SKAction.stop())
         } else {
             print("could not find file \(filename)")
             return

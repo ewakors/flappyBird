@@ -14,7 +14,7 @@ class GameViewController: UIViewController {
     let duration = 3.0
     let distanceBetweenWalls = 100.0
     let widthWall = 50.0
-    let heightWall = 100.0
+    let heightWall = 20.0
     var gameTimer = Timer()
     var timeInterval = 0.5
 
@@ -27,14 +27,12 @@ class GameViewController: UIViewController {
                 {(gameTimer) in
                     if scene.gameStarted == true {
                         let heightPonyJump = CGFloat.random(min: 0,max: 100)
-                        
                         scene.ponyJumpFeatures(heightPonyJump: heightPonyJump)
                         scene.startGameTimer(gameTimer: gameTimer)
-                        print("\(heightPonyJump)")
                     }
             })
    
-            scene.startGame(duration: duration, distanceBetweenWalls: CGFloat(distanceBetweenWalls), widthWall: scene.frame.width / 20, heightWall: CGFloat(heightWall))
+            scene.startGame(duration: duration, distanceBetweenWalls: CGFloat(distanceBetweenWalls), widthWall: CGFloat(widthWall), heightWall: CGFloat(heightWall))
             
             let skView = self.view as! SKView
             skView.showsFPS = true

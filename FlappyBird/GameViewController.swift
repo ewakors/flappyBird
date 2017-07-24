@@ -13,7 +13,7 @@ class GameViewController: UIViewController {
 
     let duration = 3.0
     let distanceBetweenWalls = 100.0
-    let widthWall = 50.0
+    let widthWall = 40.0
     let heightWall = 20.0
     var gameTimer = Timer()
     var timeInterval = 0.5

@@ -250,40 +250,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         } else if GameScene.score >= 3 && GameScene.score < 6 {
             let height = CGFloat.staticWallHeight(wallHeight: 40)
             let width = CGFloat.staticWallWidth(wallWidth: widthWall + 10)
-            bottomWall.size.width = width
+            widthWall =  width
+            bottomWall.size.width = widthWall + 40
             wall.position.y = wall.position.y + height
             scoreNode.position.y = scoreNode.position.y + height
         } else if GameScene.score >= 6 && GameScene.score < 10 {
             let height = CGFloat.staticWallHeight(wallHeight: 60)
-            let width = CGFloat.staticWallWidth(wallWidth: widthWall)
-            bottomWall.size.width = width + 20 
+            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 20)
+            widthWall =  width
             wall.position.y = wall.position.y + height
             scoreNode.position.y = scoreNode.position.y + height / 2
         } else if GameScene.score >= 10 && GameScene.score < 14 {
-             let height = CGFloat.random(min: 0,max: 400)
-            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 20)
+            let height = CGFloat.random(min: 0,max: 400)
+            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 30)
             bottomWall.size.width = width
             wall.position.y = wall.position.y + height
             scoreNode.position.y = scoreNode.position.y + height / 2
         }
 
+        wall.run(moveAndRemove)
+        
+        self.addChild(wall)
+    } 
+    
+    func levelGame() {
         if GameScene.gameLevel == 0 && (GameScene.score == 3 || GameScene.score == 4) {
             levelGameScene()
             GameScene.gameLevel += 1
         } else if GameScene.gameLevel == 1 && (GameScene.score == 6 || GameScene.score == 7) {
             GameScene.gameLevel += 1
-            print("\(GameScene.gameLevel)")
             levelGameScene()
         } else if GameScene.gameLevel == 2 && (GameScene.score == 10 || GameScene.score == 11) {
             GameScene.gameLevel += 1
-            print("\(GameScene.gameLevel)")
             levelGameScene()
         }
-        
-        wall.run(moveAndRemove)
-        
-        self.addChild(wall)
-    } 
+    }
     
     func createBottomWall(bottomWall: SKSpriteNode, bottomWidth: CGFloat, bottomHeight: CGFloat) {
         bottomWall.setScale(0.5)
@@ -370,7 +371,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.view?.presentScene(scene, transition: reveal)
         self.removeAllChildren()
         self.removeAllActions()
-        gamePaused = false
     }
     
     func createScene() {

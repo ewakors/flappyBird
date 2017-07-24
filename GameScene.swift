@@ -244,7 +244,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if GameScene.score < 6 {
             bottomWall.size.width = widthWall
             wall.position.y = wall.position.y
-           // scoreNode.position.y = scoreNode.position.y + height
+            scoreNode.position.y = scoreNode.position.y
         } else if GameScene.score >= 6 && GameScene.score < 10 {
             let height = CGFloat.staticWallHeight(wallHeight: 40)
             let width = CGFloat.staticWallWidth(wallWidth: widthWall + 10)
@@ -288,8 +288,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createCoin(scoreNode: SKSpriteNode) {
-        scoreNode.size = CGSize(width: 150, height: 50)
-        scoreNode.position = CGPoint(x: self.frame.width + 25 , y: bottomWall.position.y)
+        scoreNode.size = CGSize(width: 50, height: 50)
+        scoreNode.position = CGPoint(x: self.frame.width + 25 , y: self.frame.height / 4)
         scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
         scoreNode.physicsBody?.affectedByGravity = false
         scoreNode.physicsBody?.isDynamic = false
@@ -303,7 +303,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         startButton.size = CGSize(width: 100, height: 50)
         startButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
         startButton.zPosition = 4
-        startButton.setScale(0)
         self.addChild(startButton)
         startButton.run(SKAction.scale(to: 1.0, duration: 0.3))
         //playGameMusic(filename: StaticValue.startGameMusicField, autoPlayLooped: false)
@@ -312,10 +311,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func createStopMusicButton() {
         startMusicButton.removeFromParent()
         stopMusicButton = SKSpriteNode(imageNamed: StaticValue.muteImageField)
-        stopMusicButton.size = CGSize(width: 30, height: 30)
-        stopMusicButton.position = CGPoint(x: self.frame.width / 4 + 220 , y: self.frame.height / 4 + 400)
+        stopMusicButton.size = CGSize(width: 25, height: 25)
+        stopMusicButton.position = CGPoint(x: self.frame.width / 1.07, y: self.frame.height / 1.04)
         stopMusicButton.zPosition = 9
-        stopMusicButton.setScale(0)
         self.addChild(stopMusicButton)
         stopMusicButton.run(SKAction.scale(to: 1.0, duration: 0.3))
     }
@@ -323,10 +321,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func createStartMusicButton() {
         stopMusicButton.removeFromParent()
         startMusicButton = SKSpriteNode(imageNamed: StaticValue.soundImageField)
-        startMusicButton.size = CGSize(width: 30, height: 30)
-        startMusicButton.position = CGPoint(x: self.frame.width / 4 + 220 , y: self.frame.height / 4 + 400)
+        startMusicButton.size = CGSize(width: 25, height: 25)
+        startMusicButton.position = CGPoint(x: self.frame.width / 1.07 , y: self.frame.height / 1.04)
         startMusicButton.zPosition = 9
-        startMusicButton.setScale(0)
         self.addChild(startMusicButton)
         startMusicButton.run(SKAction.scale(to: 1.0, duration: 0.3))
     }

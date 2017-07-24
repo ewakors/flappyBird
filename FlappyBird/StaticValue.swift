@@ -42,5 +42,6 @@ class StaticValue: SKScene {
     static let actionCreateCoinField = "actionCreateCoin"
     static let actionCreateBottomWallField = "actionCreateBottomWall"
     static let musicFileExtensionFiled = "mp3"
+    static let levelGameMessageField = "Level game: "
     
 }

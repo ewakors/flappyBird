@@ -25,6 +25,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     static var score = Int()
     static var highScore = Int()
+    static var gameLevel = Int()
     static var musicGame = SKAudioNode()
     static let scoreLabel = SKLabelNode()
     static let highScoreLabel = SKLabelNode()
@@ -43,7 +44,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameStarted = Bool()
     var died = Bool()
     var mute: Bool = false
-    var click: Bool = false
+    var gamePaused = Bool ()
     var duration: CFTimeInterval = CFTimeInterval(UserDefaults.standard.float(forKey: StaticValue.durationField))
     var distanceBetweenWalls: CGFloat = CGFloat(UserDefaults.standard.float(forKey: StaticValue.distanceBetweenWallsField))
     var widthWall: CGFloat = CGFloat(UserDefaults.standard.float(forKey: StaticValue.widthWallField))
@@ -84,6 +85,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     startButton.removeFromParent()
                     startButton.size = CGSize(width: self.frame.width, height: self.frame.height)
                     gameStarted = true
+                    gamePaused = false
+                    
                     GameScene.musicGame.run((SKAction.stop()))
                    // playGameMusic(filename: StaticValue.backgroundMusicField, autoPlayLooped: true)
                     
@@ -156,7 +159,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
                 node.speed = 0
                 self.removeAllActions()
-                //self.gameTimer.invalidate()
             }))
             
             if died == false {
@@ -231,7 +233,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         bottomWall = SKSpriteNode(imageNamed: StaticValue.wallImageField)
         actionCreateBottomWall = SKAction.run {
-            self.createBottomWall(bottomWall: self.bottomWall, bottomWidth: self.widthWall, bottomHeight: self.heightWall )
+            self.createBottomWall(bottomWall: self.bottomWall, bottomWidth: self.widthWall, bottomHeight: self.heightWall)
         }
     
         wall.addChild(bottomWall)
@@ -240,25 +242,44 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let transparentWall = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         createTransparentWall(transparentWall: transparentWall)
         wall.addChild(transparentWall)
-
-        if GameScene.score < 6 {
+        
+        if GameScene.score < 3 {
             bottomWall.size.width = widthWall
             wall.position.y = wall.position.y
             scoreNode.position.y = scoreNode.position.y
-        } else if GameScene.score >= 6 && GameScene.score < 10 {
+        } else if GameScene.score >= 3 && GameScene.score < 6 {
             let height = CGFloat.staticWallHeight(wallHeight: 40)
             let width = CGFloat.staticWallWidth(wallWidth: widthWall + 10)
-            wall.position.y = wall.position.y + height
             bottomWall.size.width = width
+            wall.position.y = wall.position.y + height
             scoreNode.position.y = scoreNode.position.y + height
-        } else {
-            let height = CGFloat.random(min: 0,max: 400)
+        } else if GameScene.score >= 6 && GameScene.score < 10 {
+            let height = CGFloat.staticWallHeight(wallHeight: 60)
+            let width = CGFloat.staticWallWidth(wallWidth: widthWall)
+            bottomWall.size.width = width + 20 
+            wall.position.y = wall.position.y + height
+            scoreNode.position.y = scoreNode.position.y + height / 2
+        } else if GameScene.score >= 10 && GameScene.score < 14 {
+             let height = CGFloat.random(min: 0,max: 400)
             let width = CGFloat.staticWallWidth(wallWidth: widthWall + 20)
             bottomWall.size.width = width
             wall.position.y = wall.position.y + height
             scoreNode.position.y = scoreNode.position.y + height / 2
         }
 
+        if GameScene.gameLevel == 0 && (GameScene.score == 3 || GameScene.score == 4) {
+            levelGameScene()
+            GameScene.gameLevel += 1
+        } else if GameScene.gameLevel == 1 && (GameScene.score == 6 || GameScene.score == 7) {
+            GameScene.gameLevel += 1
+            print("\(GameScene.gameLevel)")
+            levelGameScene()
+        } else if GameScene.gameLevel == 2 && (GameScene.score == 10 || GameScene.score == 11) {
+            GameScene.gameLevel += 1
+            print("\(GameScene.gameLevel)")
+            levelGameScene()
+        }
+        
         wall.run(moveAndRemove)
         
         self.addChild(wall)
@@ -340,6 +361,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameStarted = false
         saveHighScore(highScore: GameScene.score)
         GameScene.score = 0
+    }
+    
+    func levelGameScene() {
+        GameScene.musicGame.run((SKAction.stop()))
+        let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+        let scene = LevelGameScene(size: self.size)
+        self.view?.presentScene(scene, transition: reveal)
+        self.removeAllChildren()
+        self.removeAllActions()
+        gamePaused = false
     }
     
     func createScene() {

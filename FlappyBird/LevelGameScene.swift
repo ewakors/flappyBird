@@ -17,6 +17,9 @@ class LevelGameScene: SKScene {
     var continueButton = SKSpriteNode()
     var quitButton = SKSpriteNode()
     var quitGame: Bool = false
+    var score = Int()
+    var highScore = Int()
+    var gameLevel = Int()
     
     override init(size: CGSize) {
         super.init(size: size)
@@ -62,7 +65,7 @@ class LevelGameScene: SKScene {
     
     func createLevelGameLabel() {
         levelGameLabel.fontName = StaticValue.fontNameField
-        levelGameLabel.text = "\(StaticValue.levelGameMessageField) \(GameScene.gameLevel)"
+        levelGameLabel.text = "\(StaticValue.levelGameMessageField) \(gameLevel)"
         levelGameLabel.fontColor = SKColor.black
         levelGameLabel.fontSize = 60
         levelGameLabel.zPosition = 1
@@ -74,7 +77,7 @@ class LevelGameScene: SKScene {
     func createScoreLabel() {
         scoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 + 30)
         scoreLabel.horizontalAlignmentMode = .center
-        scoreLabel.text = "\(GameScene.score)"
+        scoreLabel.text = "\(score)"
         scoreLabel.fontName = StaticValue.fontNameField
         scoreLabel.fontSize = 40
         scoreLabel.fontColor = SKColor.black
@@ -85,7 +88,7 @@ class LevelGameScene: SKScene {
     func createHighScoreLabel() {
         highScoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 - 50)
         highScoreLabel.horizontalAlignmentMode = .center
-        highScoreLabel.text = "\(StaticValue.highScoreTextField) \(GameScene.highScore)"
+        highScoreLabel.text = "\(StaticValue.highScoreTextField) \(highScore)"
         highScoreLabel.fontName = StaticValue.fontNameField
         highScoreLabel.fontSize = 50
         highScoreLabel.fontColor = SKColor.black
@@ -94,7 +97,7 @@ class LevelGameScene: SKScene {
     }
     
     func createContinueButton() {
-        continueButton = SKSpriteNode(imageNamed: StaticValue.restartBtnImageField)
+        continueButton = SKSpriteNode(imageNamed: StaticValue.startBtnImageField)
         continueButton.size = CGSize(width: 100, height: 50)
         continueButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 1.8 - 150)
         continueButton.zPosition = 6
@@ -104,7 +107,7 @@ class LevelGameScene: SKScene {
     }
     
     func createQuitButton() {
-        quitButton = SKSpriteNode(imageNamed: StaticValue.restartBtnImageField)
+        quitButton = SKSpriteNode(imageNamed: StaticValue.quitGameBtnImageField)
         quitButton.size = CGSize(width: 100, height: 50)
         quitButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2.3 - 150)
         quitButton.zPosition = 6

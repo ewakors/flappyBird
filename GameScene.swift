@@ -57,6 +57,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var scoreNode = SKSpriteNode()
     var bottomWall = SKSpriteNode()
     var actionCreateBottomWall = SKAction()
+    
 
     override func didMove(to view: SKView) {
        
@@ -118,23 +119,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             } else if stopMusicButton.contains(location) {
                 muteMusic()
-            }
-        }
-    }
-    
-    override func update(_ currentTime: TimeInterval) {
-        if gameStarted == true {
-            if died == false {
-                enumerateChildNodes(withName: StaticValue.backgroundName, using: ({
-                    (node, error) in
-                    
-                    self.background = node as! SKSpriteNode
-                    self.background.position = CGPoint(x: self.background.position.x - 2, y: self.background.position.y)
-                    
-                    if self.background.position.x <= -self.background.size.width {
-                        self.background.position = CGPoint(x: self.background.position.x + self.background.size.width * 2,y: self.background.position.y)
-                    }
-                }))
             }
         }
     }
@@ -377,14 +361,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         self.physicsWorld.contactDelegate = self
         
-        for i in 0..<2 {
+        
             background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
             background.anchorPoint = CGPoint.zero
-            background.position = CGPoint(x: CGFloat(i) * self.frame.width, y: 0)
+            background.position = CGPoint(x: 0, y: 0)
             background.name = StaticValue.backgroundName
             background.size = (self.view?.bounds.size)!
             self.addChild(background)
-        }
+        
 
         if mute == false {
             createStopMusicButton()
@@ -400,14 +384,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func createGameScene() {
         GameScene.scoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2.5 + self.frame.height / 2.5)
+        
         GameScene.scoreLabel.text = "\(GameScene.score)"
         GameScene.scoreLabel.fontName = StaticValue.fontNameField
         GameScene.scoreLabel.fontSize = 40
+        GameScene.scoreLabel.fontColor = SKColor.black
         GameScene.scoreLabel.zPosition = 5
         self.addChild(GameScene.scoreLabel)
         GameScene.highScoreLabel.position = CGPoint(x: self.frame.width / 3, y: self.frame.height / 2 + self.frame.height / 2.5)
         GameScene.highScoreLabel.fontName = StaticValue.fontNameField
         GameScene.highScoreLabel.fontSize = 40
+        GameScene.highScoreLabel.fontColor = SKColor.black
         GameScene.highScoreLabel.zPosition = 2
         self.addChild(GameScene.highScoreLabel)
     }

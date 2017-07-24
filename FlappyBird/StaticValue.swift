@@ -32,6 +32,7 @@ class StaticValue: SKScene {
     static let soundImageField = "Sound"
     static let gameOverMessageField = "Game over"
     static let restartBtnImageField = "RestartBtn"
+    static var quitGameBtnImageField = "quitGameButton"
     static let gameOverMusicField = "gameOverMusic"
     static let durationField = "duration"
     static let distanceBetweenWallsField = "distanceBetweenWalls"
@@ -43,5 +44,6 @@ class StaticValue: SKScene {
     static let actionCreateBottomWallField = "actionCreateBottomWall"
     static let musicFileExtensionFiled = "mp3"
     static let levelGameMessageField = "Level game: "
+    static let scoreField = "score"
     
 }

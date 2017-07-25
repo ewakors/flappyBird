@@ -251,7 +251,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bottomBarrier.physicsBody = SKPhysicsBody(rectangleOf: bottomBarrier.size)
         bottomBarrier.physicsBody?.categoryBitMask = PhysicsCategory.barrier
         bottomBarrier.physicsBody?.isDynamic = false
-        bottomBarrier.position = CGPoint(x: self.frame.width + 25, y: self.frame.height - self.frame.height * 1.35 + bottomHeight)
+        bottomBarrier.position = CGPoint(x: self.frame.width + 25, y: self.frame.height - self.frame.height * 1.35 + bottomHeight + grassHeight)
         bottomBarrier.zPosition = 1
     }
     
@@ -275,9 +275,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func createStartButton() {
         startButton = SKSpriteNode(imageNamed: StaticValue.startBtnImageField)
-        startButton.size = CGSize(width: 100, height: 50)
-        startButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
-        startButton.zPosition = 4
+        startButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 4 )
+        startButton.position = CGPoint(x: frame.midX, y: frame.midY)
+        startButton.zPosition = 9
         addChild(startButton)
         startButton.run(SKAction.scale(to: 1.0, duration: 0.3))
         //playGameMusic(filename: StaticValue.startGameMusicField, autoPlayLooped: false)
@@ -330,7 +330,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
         background.position = CGPoint(x: frame.midX, y: frame.midY)
-        background.size = self.frame.size
+        background.size = frame.size
         self.addChild(background)
 
         if mute == false {
@@ -340,24 +340,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             createStartMusicButton()
         }
 
-        createGameScene()
+        createScoreLabel()
         createFrameScene()
     }
     
-    func createGameScene() {
+    func createScoreLabel() {
         GameScene.highScoreLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.75)
         GameScene.highScoreLabel.fontName = StaticValue.fontNameField
         GameScene.highScoreLabel.fontSize = 40
-        GameScene.highScoreLabel.fontColor = SKColor.black
         GameScene.highScoreLabel.zPosition = 2
+        GameScene.highScoreLabel.fontColor = SKColor.black
         addChild(GameScene.highScoreLabel)
         
         GameScene.scoreLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.5)
         GameScene.scoreLabel.text = "\(GameScene.score)"
         GameScene.scoreLabel.fontName = StaticValue.fontNameField
         GameScene.scoreLabel.fontSize = 40
-        GameScene.scoreLabel.fontColor = SKColor.black
         GameScene.scoreLabel.zPosition = 2
+        GameScene.scoreLabel.fontColor = SKColor.black
         addChild(GameScene.scoreLabel)
     }
     

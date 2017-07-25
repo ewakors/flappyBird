@@ -331,7 +331,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
         background.position = CGPoint(x: frame.midX, y: frame.midY)
         background.size = frame.size
-        self.addChild(background)
+        addChild(background)
 
         if mute == false {
             createStopMusicButton()

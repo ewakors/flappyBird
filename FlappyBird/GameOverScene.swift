@@ -43,52 +43,48 @@ class GameOverScene: SKScene {
     }
     
     func createBackground() {
-        let background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
-        background.anchorPoint = CGPoint.zero
-        background.position = CGPoint(x: 0, y: 0)
-        background.name = StaticValue.backgroundName
-        background.size = CGSize(width: self.frame.width, height: self.frame.height)
-        self.addChild(background)
+        var background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
+        background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
+        background.position = CGPoint(x: frame.midX, y: frame.midY)
+        background.size = frame.size
+        addChild(background)
     }
     
     func createGameOverLabel() {
         gameOverLabel.fontName = StaticValue.fontNameField
         gameOverLabel.text = StaticValue.gameOverMessageField
         gameOverLabel.fontColor = SKColor.black
-        gameOverLabel.fontSize = 60
+        gameOverLabel.fontSize = 80
+        gameOverLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.5)
         gameOverLabel.zPosition = 1
-        gameOverLabel.horizontalAlignmentMode = .center
-        gameOverLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 + 100)
-        self.addChild(gameOverLabel)
+        addChild(gameOverLabel)
     }
     
     func createScoreLabel() {
-        scoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 + 30)
-        scoreLabel.horizontalAlignmentMode = .center
-        scoreLabel.text = "\(GameScene.score)"
+        scoreLabel.position = CGPoint(x: frame.midX, y: frame.midY)
+        scoreLabel.text = "Score: \(GameScene.score)"
         scoreLabel.fontName = StaticValue.fontNameField
         scoreLabel.fontSize = 40
         scoreLabel.fontColor = SKColor.black
-        scoreLabel.zPosition = 5
-        self.addChild(scoreLabel)
+        scoreLabel.zPosition = 1
+        addChild(scoreLabel)
     }
     
     func createHighScoreLabel() {
-        highScoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 - 50)
-        highScoreLabel.horizontalAlignmentMode = .center
+        highScoreLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.2)
         highScoreLabel.text = "\(StaticValue.highScoreTextField) \(GameScene.highScore)"
         highScoreLabel.fontName = StaticValue.fontNameField
         highScoreLabel.fontSize = 50
         highScoreLabel.fontColor = SKColor.black
-        highScoreLabel.zPosition = 5
-        self.addChild(highScoreLabel)
+        highScoreLabel.zPosition = 1
+        addChild(highScoreLabel)
     }
     
     func createRestartButton() {
         restartButton = SKSpriteNode(imageNamed: StaticValue.restartBtnImageField)
         restartButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 4 )
-        restartButton.position = CGPoint(x: frame.midX, y: frame.midY)
-        restartButton.zPosition = 9
+        restartButton.position = CGPoint(x: frame.midX, y: frame.midY * 0.75)
+        restartButton.zPosition = 1
         addChild(restartButton)
         restartButton.run(SKAction.scale(to: 1.0, duration: 0.3))
         playGameMusic(filename: StaticValue.gameOverMusicField, autoPlayLooped: false)
@@ -105,5 +101,4 @@ class GameOverScene: SKScene {
             return
         }
     }
-    
 }

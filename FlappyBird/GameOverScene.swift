@@ -86,11 +86,10 @@ class GameOverScene: SKScene {
     
     func createRestartButton() {
         restartButton = SKSpriteNode(imageNamed: StaticValue.restartBtnImageField)
-        restartButton.size = CGSize(width: 100, height: 50)
-        restartButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 - 150)
-        restartButton.zPosition = 6
-        restartButton.setScale(0)
-        self.addChild(restartButton)
+        restartButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 4 )
+        restartButton.position = CGPoint(x: frame.midX, y: frame.midY)
+        restartButton.zPosition = 9
+        addChild(restartButton)
         restartButton.run(SKAction.scale(to: 1.0, duration: 0.3))
         playGameMusic(filename: StaticValue.gameOverMusicField, autoPlayLooped: false)
     }

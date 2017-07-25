@@ -401,9 +401,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createPony() {
+        let ponyScale = CGFloat(0.75)
         pony = SKSpriteNode(imageNamed: StaticValue.ponyImageField )
-        pony.size = CGSize(width: 70, height: 80)
-        pony.position = CGPoint(x: self.frame.width / 2 , y: self.frame.height / 2)
+        pony.size = CGSize(width: 100, height: 100)
+        pony.xScale = ponyScale
+        pony.yScale = ponyScale
+        pony.position = CGPoint(x: frame.midX , y: frame.midY)
         pony.physicsBody = SKPhysicsBody(circleOfRadius: pony.size.height / 2)
         pony.physicsBody?.categoryBitMask = PhysicsCategory.pony
         pony.physicsBody?.collisionBitMask = PhysicsCategory.bottomFrame | PhysicsCategory.barrier | PhysicsCategory.topFrame | PhysicsCategory.leftFrame | PhysicsCategory.rightFrame
@@ -411,7 +414,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         pony.physicsBody?.affectedByGravity = false
         pony.physicsBody?.isDynamic = true
         pony.zPosition = 2
-        self.addChild(pony)
+        addChild(pony)
     }
 
     func saveHighScore(highScore:Int) {
@@ -433,7 +436,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if let musicURL = Bundle.main.url(forResource: filename, withExtension: StaticValue.musicFileExtensionFiled) {
             GameScene.musicGame = SKAudioNode(url: musicURL)
             GameScene.musicGame.autoplayLooped = autoPlayLooped
-            self.addChild(GameScene.musicGame)
+            addChild(GameScene.musicGame)
             GameScene.musicGame.run(SKAction.stop())
         } else {
             print("could not find file \(filename)")

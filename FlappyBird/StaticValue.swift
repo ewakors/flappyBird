@@ -40,10 +40,6 @@ class StaticValue: SKScene {
     static let heightWallField = "heightWall"
     static let heightPonyJumpField = "heightPonyJump"
     static let gameTimerField = "gameTimer"
-    static let actionCreateCoinField = "actionCreateCoin"
-    static let actionCreateBottomWallField = "actionCreateBottomWall"
     static let musicFileExtensionFiled = "mp3"
     static let levelGameMessageField = "Level game: "
-    static let scoreField = "score"
-    
 }

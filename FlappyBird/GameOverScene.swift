@@ -29,6 +29,7 @@ class GameOverScene: SKScene {
         for touch: AnyObject in touches {
             let location = touch.location(in: self)
             if restartButton.contains(location) {
+                
                 let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
                 let scene = GameScene(size: self.size)
                 scene.scaleMode = .aspectFill
@@ -42,14 +43,12 @@ class GameOverScene: SKScene {
     }
     
     func createBackground() {
-        for i in 0..<2 {
-            let background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
-            background.anchorPoint = CGPoint.zero
-            background.position = CGPoint(x: CGFloat(i) * self.frame.width, y: 0)
-            background.name = StaticValue.backgroundName
-            background.size = CGSize(width: self.frame.width, height: self.frame.height)
-            self.addChild(background)
-        }
+        let background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
+        background.anchorPoint = CGPoint.zero
+        background.position = CGPoint(x: 0, y: 0)
+        background.name = StaticValue.backgroundName
+        background.size = CGSize(width: self.frame.width, height: self.frame.height)
+        self.addChild(background)
     }
     
     func createGameOverLabel() {

@@ -11,29 +11,33 @@ import SpriteKit
 
 class GameViewController: UIViewController {
 
-    let duration = 3.0
-    let distanceBetweenWalls = 100.0
-    let widthWall = 40.0
-    let heightWall = 20.0
+    var duration = CFTimeInterval()
+    var distanceBetweenWalls = CGFloat()
+    var widthWall = CGFloat()
+    var heightWall = CGFloat()
     var gameTimer = Timer()
     var timeInterval = 0.5
+    var heightPonyJump = CGFloat()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if let scene = GameScene(fileNamed:"GameScene") {
-
+ 
             gameTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block:
                 {(gameTimer) in
+                    self.duration = 3.0
+                    self.distanceBetweenWalls = 100.0
+                    self.widthWall = 40.0
+                    self.heightWall = 20.0
+                    self.timeInterval = 0.5
+                    self.heightPonyJump = CGFloat.random(min: -150 ,max: 50)
+                    
                     if scene.gameStarted == true {
-                        let heightPonyJump = CGFloat.random(min: 0,max: 100)
-                        scene.ponyJumpFeatures(heightPonyJump: heightPonyJump)
-                        scene.startGameTimer(gameTimer: gameTimer)
+                        scene.startGame(duration: CFTimeInterval(self.duration), distanceBetweenWalls: CGFloat(self.distanceBetweenWalls), widthWall: CGFloat(self.widthWall), heightWall: CGFloat(self.heightWall), heightPonyJump: self.heightPonyJump)
                     }
             })
-   
-            scene.startGame(duration: duration, distanceBetweenWalls: CGFloat(distanceBetweenWalls), widthWall: CGFloat(widthWall), heightWall: CGFloat(heightWall))
-            
+
             let skView = self.view as! SKView
             skView.showsFPS = true
             skView.showsNodeCount = true
@@ -42,7 +46,6 @@ class GameViewController: UIViewController {
             scene.size = self.view.bounds.size
             
             skView.presentScene(scene)
-            
         }
     }
 

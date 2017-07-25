@@ -128,8 +128,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             playGameMusic(filename: StaticValue.scoreMusicField, autoPlayLooped: false)
             firstBody.node?.removeFromParent()
             
-        }
-        else if (firstBody.categoryBitMask == PhysicsCategory.pony && secondBody.categoryBitMask == PhysicsCategory.leftFrame || firstBody.categoryBitMask == PhysicsCategory.leftFrame && secondBody.categoryBitMask == PhysicsCategory.pony) || (firstBody.categoryBitMask == PhysicsCategory.pony) {
+        } else if (firstBody.categoryBitMask == PhysicsCategory.pony && secondBody.categoryBitMask == PhysicsCategory.leftFrame || firstBody.categoryBitMask == PhysicsCategory.leftFrame && secondBody.categoryBitMask == PhysicsCategory.pony) || (firstBody.categoryBitMask == PhysicsCategory.pony) {
             
             enumerateChildNodes(withName: StaticValue.leftFrame, using: ({
                 (node, error) in
@@ -230,7 +229,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         wall.run(moveAndRemove)
         
-        self.addChild(wall)
+        addChild(wall)
     } 
     
     func levelGame() {
@@ -279,7 +278,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         startButton.size = CGSize(width: 100, height: 50)
         startButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
         startButton.zPosition = 4
-        self.addChild(startButton)
+        addChild(startButton)
         startButton.run(SKAction.scale(to: 1.0, duration: 0.3))
         //playGameMusic(filename: StaticValue.startGameMusicField, autoPlayLooped: false)
     }
@@ -290,7 +289,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         stopMusicButton.size = CGSize(width: 25, height: 25)
         stopMusicButton.position = CGPoint(x: self.frame.width / 1.07, y: self.frame.height / 1.04)
         stopMusicButton.zPosition = 9
-        self.addChild(stopMusicButton)
+        addChild(stopMusicButton)
         stopMusicButton.run(SKAction.scale(to: 1.0, duration: 0.3))
     }
     
@@ -300,7 +299,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         startMusicButton.size = CGSize(width: 25, height: 25)
         startMusicButton.position = CGPoint(x: self.frame.width / 1.07 , y: self.frame.height / 1.04)
         startMusicButton.zPosition = 9
-        self.addChild(startMusicButton)
+        addChild(startMusicButton)
         startMusicButton.run(SKAction.scale(to: 1.0, duration: 0.3))
     }
 
@@ -346,20 +345,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createGameScene() {
-        GameScene.scoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2.5 + self.frame.height / 2.5)
-        GameScene.scoreLabel.text = "\(GameScene.score)"
-        GameScene.scoreLabel.fontName = StaticValue.fontNameField
-        GameScene.scoreLabel.fontSize = 40
-        GameScene.scoreLabel.fontColor = SKColor.black
-        GameScene.scoreLabel.zPosition = 2
-        self.addChild(GameScene.scoreLabel)
-        
-        GameScene.highScoreLabel.position = CGPoint(x: self.frame.width / 3, y: self.frame.height / 2 + self.frame.height / 2.5)
+        GameScene.highScoreLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.75)
         GameScene.highScoreLabel.fontName = StaticValue.fontNameField
         GameScene.highScoreLabel.fontSize = 40
         GameScene.highScoreLabel.fontColor = SKColor.black
         GameScene.highScoreLabel.zPosition = 2
         addChild(GameScene.highScoreLabel)
+        
+        GameScene.scoreLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.5)
+        GameScene.scoreLabel.text = "\(GameScene.score)"
+        GameScene.scoreLabel.fontName = StaticValue.fontNameField
+        GameScene.scoreLabel.fontSize = 40
+        GameScene.scoreLabel.fontColor = SKColor.black
+        GameScene.scoreLabel.zPosition = 2
+        addChild(GameScene.scoreLabel)
     }
     
     func createFrameScene() {
@@ -436,7 +435,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if let musicURL = Bundle.main.url(forResource: filename, withExtension: StaticValue.musicFileExtensionFiled) {
             GameScene.musicGame = SKAudioNode(url: musicURL)
             GameScene.musicGame.autoplayLooped = autoPlayLooped
-            addChild(GameScene.musicGame)
+            self.addChild(GameScene.musicGame)
             GameScene.musicGame.run(SKAction.stop())
         } else {
             print("could not find file \(filename)")

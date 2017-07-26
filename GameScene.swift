@@ -57,7 +57,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameTimer = Timer()
     var scoreNode = SKSpriteNode()
     var bottomBarrier  = SKSpriteNode()
-
+    
     override func didMove(to view: SKView) {
        super.didMove(to: view)
         createStartButton()
@@ -95,7 +95,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                        
                     } else {
                         //ponyJumpFeatures(heightPonyJump: 150.0)
-                    
                     }
                 }
                 
@@ -114,6 +113,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
+
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -148,7 +148,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let spawn = SKAction.run({
             () in
-           
                 self.createBarriers()
         })
         
@@ -188,7 +187,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.ponyJumpFeatures()
         
         wall = SKNode()
-        wall.zPosition = 2
 
         scoreNode = SKSpriteNode(imageNamed: StaticValue.coinImageField)
         createCoin(scoreNode: self.scoreNode)
@@ -252,7 +250,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bottomBarrier.physicsBody?.categoryBitMask = PhysicsCategory.barrier
         bottomBarrier.physicsBody?.isDynamic = false
         bottomBarrier.position = CGPoint(x: frame.maxX + 25 ,y: frame.midY - frame.midY * 1.55)
-        bottomBarrier.zPosition = 1
     }
     
     func createTransparentWall(transparentWall: SKSpriteNode) {
@@ -275,7 +272,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         startButton = SKSpriteNode(imageNamed: StaticValue.startBtnImageField)
         startButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 4 )
         startButton.position = CGPoint(x: frame.midX, y: frame.midY)
-        startButton.zPosition = 9
+        startButton.zPosition = 1
         addChild(startButton)
         startButton.run(SKAction.scale(to: 1.0, duration: 0.3))
         //playGameMusic(filename: StaticValue.startGameMusicField, autoPlayLooped: false)
@@ -286,7 +283,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         stopMusicButton = SKSpriteNode(imageNamed: StaticValue.muteImageField)
         stopMusicButton.size = CGSize(width: 25, height: 25)
         stopMusicButton.position = CGPoint(x: self.frame.width / 1.07, y: self.frame.height / 1.04)
-        stopMusicButton.zPosition = 9
         addChild(stopMusicButton)
         stopMusicButton.run(SKAction.scale(to: 1.0, duration: 0.3))
     }
@@ -296,7 +292,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         startMusicButton = SKSpriteNode(imageNamed: StaticValue.soundImageField)
         startMusicButton.size = CGSize(width: 25, height: 25)
         startMusicButton.position = CGPoint(x: self.frame.width / 1.07 , y: self.frame.height / 1.04)
-        startMusicButton.zPosition = 9
         addChild(startMusicButton)
         startMusicButton.run(SKAction.scale(to: 1.0, duration: 0.3))
     }
@@ -346,7 +341,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         GameScene.highScoreLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.75)
         GameScene.highScoreLabel.fontName = StaticValue.fontNameField
         GameScene.highScoreLabel.fontSize = 40
-        GameScene.highScoreLabel.zPosition = 2
+        GameScene.highScoreLabel.zPosition = 3
         GameScene.highScoreLabel.fontColor = SKColor.black
         addChild(GameScene.highScoreLabel)
         
@@ -354,7 +349,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         GameScene.scoreLabel.text = "\(GameScene.score)"
         GameScene.scoreLabel.fontName = StaticValue.fontNameField
         GameScene.scoreLabel.fontSize = 40
-        GameScene.scoreLabel.zPosition = 2
+        GameScene.scoreLabel.zPosition = 3
         GameScene.scoreLabel.fontColor = SKColor.black
         addChild(GameScene.scoreLabel)
     }
@@ -366,7 +361,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         topFrame.physicsBody = SKPhysicsBody(rectangleOf: topFrame.size)
         topFrame.physicsBody?.categoryBitMask = PhysicsCategory.topFrame
         topFrame.physicsBody?.isDynamic = false
-        topFrame.zPosition = 1
         addChild(topFrame)
         
         rightFrame = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
@@ -375,7 +369,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         rightFrame.physicsBody = SKPhysicsBody(rectangleOf: rightFrame.size)
         rightFrame.physicsBody?.categoryBitMask = PhysicsCategory.rightFrame
         rightFrame.physicsBody?.isDynamic = false
-        rightFrame.zPosition = 1
         addChild(rightFrame)
         
         leftFrame = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
@@ -384,7 +377,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         leftFrame.physicsBody = SKPhysicsBody(rectangleOf: leftFrame.size)
         leftFrame.physicsBody?.categoryBitMask = PhysicsCategory.leftFrame
         leftFrame.physicsBody?.isDynamic = false
-        leftFrame.zPosition = 1
         addChild(leftFrame)
         
         bottomFrame = SKSpriteNode(imageNamed: StaticValue.groundImageField)
@@ -393,7 +385,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bottomFrame.physicsBody = SKPhysicsBody(rectangleOf: bottomFrame.size)
         bottomFrame.physicsBody?.categoryBitMask = PhysicsCategory.bottomFrame
         bottomFrame.physicsBody?.isDynamic = false
-        bottomFrame.zPosition = 3
+        bottomFrame.zPosition = 4
         addChild(bottomFrame)
     }
     

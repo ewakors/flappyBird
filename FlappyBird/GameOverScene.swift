@@ -9,6 +9,10 @@
 import SpriteKit
 import AVFoundation
 
+protocol RestartGame {
+    
+}
+
 class GameOverScene: SKScene {
 
     let gameOverLabel = SKLabelNode()

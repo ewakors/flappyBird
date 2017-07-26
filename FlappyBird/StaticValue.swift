@@ -46,4 +46,5 @@ class StaticValue: SKScene {
     static let scoreLabelFontSize = 40
     static let highScoreLabelFontSize = 50
     static let levelLabelFontSize = 80
+    static let maxBarrierHeight = 400
 }

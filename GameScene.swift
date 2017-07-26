@@ -212,19 +212,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             widthWall =  width
             bottomBarrier.size.width = widthWall + 40
             wall.position.y = wall.position.y + height
-            scoreNode.position.y = scoreNode.position.y + height
+            scoreNode.position.y = scoreNode.position.y + height / 3
         } else if GameScene.score >= 6 && GameScene.score < 10 {
             let height = CGFloat.staticWallHeight(wallHeight: 80)
             let width = CGFloat.staticWallWidth(wallWidth: widthWall + 20)
             widthWall =  width
             wall.position.y = wall.position.y + height
-            scoreNode.position.y = scoreNode.position.y + height / 2
+            scoreNode.position.y = scoreNode.position.y + height / 3
         } else if GameScene.score >= 10 {
             let height = CGFloat.random(min: 0,max: 400)
             let width = CGFloat.staticWallWidth(wallWidth: widthWall + 30)
             bottomBarrier.size.width = width
             wall.position.y = wall.position.y + height
-            scoreNode.position.y = scoreNode.position.y + height / 2
+            scoreNode.position.y = scoreNode.position.y + height / 3
         }
 
         wall.run(moveAndRemove)
@@ -251,24 +251,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bottomBarrier.physicsBody = SKPhysicsBody(rectangleOf: bottomBarrier.size)
         bottomBarrier.physicsBody?.categoryBitMask = PhysicsCategory.barrier
         bottomBarrier.physicsBody?.isDynamic = false
-        bottomBarrier.position = CGPoint(x: self.frame.width + 25, y: self.frame.height - self.frame.height * 1.35 + bottomHeight + grassHeight)
+        bottomBarrier.position = CGPoint(x: frame.maxX + 25 ,y: frame.midY - frame.midY * 1.55)
         bottomBarrier.zPosition = 1
     }
     
     func createTransparentWall(transparentWall: SKSpriteNode) {
-        transparentWall.size = CGSize(width: 3, height: self.frame.height)
-        transparentWall.position = CGPoint(x: self.frame.width + 25, y: (self.view?.bounds.size.height)! / 2)
+        transparentWall.size = CGSize(width: 3, height: frame.height)
+        transparentWall.position = CGPoint(x: frame.maxX + 25 , y: frame.midY)
         transparentWall.physicsBody = SKPhysicsBody(rectangleOf: transparentWall.size)
-        transparentWall.physicsBody?.affectedByGravity = false
         transparentWall.physicsBody?.isDynamic = false
         transparentWall.physicsBody?.categoryBitMask = PhysicsCategory.transparentWall
     }
     
     func createCoin(scoreNode: SKSpriteNode) {
         scoreNode.size = CGSize(width: 50, height: 50)
-        scoreNode.position = CGPoint(x: self.frame.width + 25 , y: self.frame.height / 4)
+        scoreNode.position = CGPoint(x: frame.maxX + 25,y: frame.midY * 1.4 - frame.midY)
         scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
-        scoreNode.physicsBody?.affectedByGravity = false
         scoreNode.physicsBody?.isDynamic = false
         scoreNode.physicsBody?.categoryBitMask = PhysicsCategory.score
     }

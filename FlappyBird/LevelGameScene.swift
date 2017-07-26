@@ -40,80 +40,67 @@ class LevelGameScene: SKScene {
                 scene.scaleMode = .aspectFill
                 self.view?.presentScene(scene, transition: reveal)
             } else if quitButton.contains(loctaion) {
-                print("quti game")
                 quitGame = true
                 self.scene?.removeFromParent()
-                //self.view?.dis
             }
         }
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
+    }    
     
     func createBackground() {
-        for i in 0..<2 {
-            let background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
-            background.anchorPoint = CGPoint.zero
-            background.position = CGPoint(x: CGFloat(i) * self.frame.width, y: 0)
-            background.name = StaticValue.backgroundName
-            background.size = CGSize(width: self.frame.width, height: self.frame.height)
-            self.addChild(background)
-        }
+        let background = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
+        background.position = CGPoint(x: frame.midX, y: frame.midY)
+        background.size = frame.size
+        addChild(background)
     }
     
     func createLevelGameLabel() {
         levelGameLabel.fontName = StaticValue.fontNameField
-        levelGameLabel.text = "\(StaticValue.levelGameMessageField) \(gameLevel)"
+        levelGameLabel.text = "\(StaticValue.levelGameMessageField)\(GameScene.gameLevel)"
         levelGameLabel.fontColor = SKColor.black
-        levelGameLabel.fontSize = 60
+        levelGameLabel.fontSize = CGFloat(StaticValue.levelLabelFontSize)
         levelGameLabel.zPosition = 1
-        levelGameLabel.horizontalAlignmentMode = .center
-        levelGameLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 + 100)
-        self.addChild(levelGameLabel)
+        levelGameLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.5)
+        addChild(levelGameLabel)
+    }
+
+    func createHighScoreLabel() {
+        highScoreLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.2)
+        highScoreLabel.text = "\(StaticValue.highScoreTextField)\(GameScene.highScore)"
+        highScoreLabel.fontName = StaticValue.fontNameField
+        highScoreLabel.fontSize = CGFloat(StaticValue.highScoreLabelFontSize)
+        highScoreLabel.fontColor = SKColor.black
+        highScoreLabel.zPosition = 1
+        addChild(highScoreLabel)
     }
     
     func createScoreLabel() {
-        scoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 + 30)
-        scoreLabel.horizontalAlignmentMode = .center
-        scoreLabel.text = "\(score)"
+        scoreLabel.position = CGPoint(x: frame.midX, y: frame.midY)
+        scoreLabel.text = "\(StaticValue.scoreTextField)\(GameScene.score)"
         scoreLabel.fontName = StaticValue.fontNameField
-        scoreLabel.fontSize = 40
+        scoreLabel.fontSize = CGFloat(StaticValue.scoreLabelFontSize)
         scoreLabel.fontColor = SKColor.black
-        scoreLabel.zPosition = 5
-        self.addChild(scoreLabel)
-    }
-    
-    func createHighScoreLabel() {
-        highScoreLabel.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2 - 50)
-        highScoreLabel.horizontalAlignmentMode = .center
-        highScoreLabel.text = "\(StaticValue.highScoreTextField) \(highScore)"
-        highScoreLabel.fontName = StaticValue.fontNameField
-        highScoreLabel.fontSize = 50
-        highScoreLabel.fontColor = SKColor.black
-        highScoreLabel.zPosition = 5
-        self.addChild(highScoreLabel)
+        scoreLabel.zPosition = 1
+        addChild(scoreLabel)
     }
     
     func createContinueButton() {
         continueButton = SKSpriteNode(imageNamed: StaticValue.startBtnImageField)
-        continueButton.size = CGSize(width: 100, height: 50)
-        continueButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 1.8 - 150)
-        continueButton.zPosition = 6
-        continueButton.setScale(0)
-        self.addChild(continueButton)
+        continueButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 6 )
+        continueButton.position = CGPoint(x: frame.midX, y: frame.midY * 0.75)
+        continueButton.zPosition = 1
+        addChild(continueButton)
         continueButton.run(SKAction.scale(to: 1.0, duration: 0.3))
     }
     
     func createQuitButton() {
         quitButton = SKSpriteNode(imageNamed: StaticValue.quitGameBtnImageField)
-        quitButton.size = CGSize(width: 100, height: 50)
-        quitButton.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2.3 - 150)
-        quitButton.zPosition = 6
-        quitButton.setScale(0)
-        self.addChild(quitButton)
+        quitButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 6 )
+        quitButton.position = CGPoint(x: frame.midX, y: frame.midY * 0.45)
+        quitButton.zPosition = 1
+        addChild(quitButton)
         quitButton.run(SKAction.scale(to: 1.0, duration: 0.3))
-    }
-    
+    }    
 }

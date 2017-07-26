@@ -113,7 +113,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
-
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -199,30 +198,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let transparentWall = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         createTransparentWall(transparentWall: transparentWall)
         wall.addChild(transparentWall)
-
+ 
         if GameScene.score < 3 {
             bottomBarrier.size.width = widthWall
+            print("width \(widthWall)")
             wall.position.y = wall.position.y
             scoreNode.position.y = scoreNode.position.y
         } else if GameScene.score >= 3 && GameScene.score < 6 {
-            let height = CGFloat.staticWallHeight(wallHeight: 60)
-            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 10)
-            widthWall =  width
-            bottomBarrier.size.width = widthWall + 40
-            wall.position.y = wall.position.y + height
-            scoreNode.position.y = scoreNode.position.y + height / 3
+            heightWall = heightWall + CGFloat.staticWallHeight(wallHeight: 40)
+            widthWall = widthWall + CGFloat.staticWallWidth(wallWidth: 10)
+            bottomBarrier.size.width = widthWall
+            wall.position.y = wall.position.y + heightWall
+            scoreNode.position.y = scoreNode.position.y + heightWall / 3
         } else if GameScene.score >= 6 && GameScene.score < 10 {
-            let height = CGFloat.staticWallHeight(wallHeight: 80)
-            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 20)
-            widthWall =  width
-            wall.position.y = wall.position.y + height
-            scoreNode.position.y = scoreNode.position.y + height / 3
+            heightWall = heightWall + CGFloat.staticWallHeight(wallHeight: 60)
+            widthWall = widthWall + CGFloat.staticWallWidth(wallWidth: 20)
+            bottomBarrier.size.width = widthWall
+            print("\(widthWall)")
+            wall.position.y = wall.position.y + heightWall
+            scoreNode.position.y = scoreNode.position.y + heightWall / 3
         } else if GameScene.score >= 10 {
-            let height = CGFloat.random(min: 0,max: 400)
-            let width = CGFloat.staticWallWidth(wallWidth: widthWall + 30)
-            bottomBarrier.size.width = width
-            wall.position.y = wall.position.y + height
-            scoreNode.position.y = scoreNode.position.y + height / 3
+            heightWall = heightWall + CGFloat.random(min: 0,max: 400)
+            widthWall = widthWall + CGFloat.staticWallWidth(wallWidth: 30)
+            bottomBarrier.size.width = widthWall
+            wall.position.y = wall.position.y + heightWall
+            scoreNode.position.y = scoreNode.position.y + heightWall / 3
         }
 
         wall.run(moveAndRemove)
@@ -250,6 +250,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bottomBarrier.physicsBody?.categoryBitMask = PhysicsCategory.barrier
         bottomBarrier.physicsBody?.isDynamic = false
         bottomBarrier.position = CGPoint(x: frame.maxX + 25 ,y: frame.midY - frame.midY * 1.55)
+        bottomBarrier.zPosition = 2
     }
     
     func createTransparentWall(transparentWall: SKSpriteNode) {
@@ -266,11 +267,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
         scoreNode.physicsBody?.isDynamic = false
         scoreNode.physicsBody?.categoryBitMask = PhysicsCategory.score
+        scoreNode.zPosition = 2 
     }
     
     func createStartButton() {
         startButton = SKSpriteNode(imageNamed: StaticValue.startBtnImageField)
-        startButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 4 )
+        startButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 6 )
         startButton.position = CGPoint(x: frame.midX, y: frame.midY)
         startButton.zPosition = 1
         addChild(startButton)
@@ -340,7 +342,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func createScoreLabel() {
         GameScene.highScoreLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.75)
         GameScene.highScoreLabel.fontName = StaticValue.fontNameField
-        GameScene.highScoreLabel.fontSize = 40
+        GameScene.highScoreLabel.fontSize = CGFloat(StaticValue.scoreLabelFontSize)
         GameScene.highScoreLabel.zPosition = 3
         GameScene.highScoreLabel.fontColor = SKColor.black
         addChild(GameScene.highScoreLabel)
@@ -348,7 +350,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         GameScene.scoreLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.5)
         GameScene.scoreLabel.text = "\(GameScene.score)"
         GameScene.scoreLabel.fontName = StaticValue.fontNameField
-        GameScene.scoreLabel.fontSize = 40
+        GameScene.scoreLabel.fontSize = CGFloat(StaticValue.scoreLabelFontSize)
         GameScene.scoreLabel.zPosition = 3
         GameScene.scoreLabel.fontColor = SKColor.black
         addChild(GameScene.scoreLabel)
@@ -408,14 +410,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     func saveHighScore(highScore:Int) {
         if let currentHighScore:Int = UserDefaults.standard.value(forKey: StaticValue.highScoreField) as? Int{
-            GameScene.highScoreLabel.text = "\(StaticValue.highScoreTextField) \(currentHighScore)"
+            GameScene.highScoreLabel.text = "\(StaticValue.highScoreTextField)\(currentHighScore)"
             GameScene.highScore = currentHighScore
             if(highScore > currentHighScore){
                 UserDefaults.standard.set(highScore, forKey: StaticValue.highScoreField)
                 UserDefaults.standard.synchronize()
             }
         } else{
-            GameScene.highScoreLabel.text = "\(StaticValue.highScoreTextField) \(highScore)"
+            GameScene.highScoreLabel.text = "\(StaticValue.highScoreTextField)\(highScore)"
             UserDefaults.standard.set(highScore, forKey: StaticValue.highScoreField)
             UserDefaults.standard.synchronize()
         }

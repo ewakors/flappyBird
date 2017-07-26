@@ -15,7 +15,8 @@ class StaticValue: SKScene {
     static let backgroundName = "background"
     static let leftFrame = "leftFrame"
     static let highScoreField = "highScoreLabel"
-    static let highScoreTextField = "High score:"
+    static let highScoreTextField = "High score: "
+    static let scoreTextField = "Score: "
     static let startGameMusicField = "startGameMusic"
     static let backgroundMusicField = "mamTeMocMusic"
     static let scoreMusicField = "scoreMusic"
@@ -42,4 +43,7 @@ class StaticValue: SKScene {
     static let gameTimerField = "gameTimer"
     static let musicFileExtensionFiled = "mp3"
     static let levelGameMessageField = "Level game: "
+    static let scoreLabelFontSize = 40
+    static let highScoreLabelFontSize = 50
+    static let levelLabelFontSize = 80
 }

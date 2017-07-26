@@ -29,7 +29,6 @@ class GameOverScene: SKScene {
         for touch: AnyObject in touches {
             let location = touch.location(in: self)
             if restartButton.contains(location) {
-                
                 let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
                 let scene = GameScene(size: self.size)
                 scene.scaleMode = .aspectFill
@@ -54,30 +53,30 @@ class GameOverScene: SKScene {
         gameOverLabel.fontName = StaticValue.fontNameField
         gameOverLabel.text = StaticValue.gameOverMessageField
         gameOverLabel.fontColor = SKColor.black
-        gameOverLabel.fontSize = 80
+        gameOverLabel.fontSize = CGFloat(StaticValue.levelLabelFontSize)
         gameOverLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.5)
         gameOverLabel.zPosition = 1
         addChild(gameOverLabel)
     }
     
-    func createScoreLabel() {
-        scoreLabel.position = CGPoint(x: frame.midX, y: frame.midY)
-        scoreLabel.text = "Score: \(GameScene.score)"
-        scoreLabel.fontName = StaticValue.fontNameField
-        scoreLabel.fontSize = 40
-        scoreLabel.fontColor = SKColor.black
-        scoreLabel.zPosition = 1
-        addChild(scoreLabel)
-    }
-    
     func createHighScoreLabel() {
         highScoreLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.2)
-        highScoreLabel.text = "\(StaticValue.highScoreTextField) \(GameScene.highScore)"
+        highScoreLabel.text = "\(StaticValue.highScoreTextField)\(GameScene.highScore)"
         highScoreLabel.fontName = StaticValue.fontNameField
-        highScoreLabel.fontSize = 50
+        highScoreLabel.fontSize = CGFloat(StaticValue.highScoreLabelFontSize)
         highScoreLabel.fontColor = SKColor.black
         highScoreLabel.zPosition = 1
         addChild(highScoreLabel)
+    }
+    
+    func createScoreLabel() {
+        scoreLabel.position = CGPoint(x: frame.midX, y: frame.midY)
+        scoreLabel.text = "\(StaticValue.scoreTextField)\(GameScene.score)"
+        scoreLabel.fontName = StaticValue.fontNameField
+        scoreLabel.fontSize = CGFloat(StaticValue.scoreLabelFontSize)
+        scoreLabel.fontColor = SKColor.black
+        scoreLabel.zPosition = 1
+        addChild(scoreLabel)
     }
     
     func createRestartButton() {

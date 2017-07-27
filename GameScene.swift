@@ -85,6 +85,7 @@ class GameScene: SKScene {
     var leftWall = SKSpriteNode()
     var rightWall = SKSpriteNode()
     var blocks = SKNode()
+    var scoreBlockTop = SKNode()
     
     var player = SKSpriteNode()
     var background = SKSpriteNode()
@@ -253,6 +254,7 @@ class GameScene: SKScene {
     
     func createBlocks() {
         blocks = SKNode()
+        scoreBlockTop = SKNode()
 
         let block = SKSpriteNode(imageNamed: StaticValue.wallImageField)
         block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 30))
@@ -302,34 +304,30 @@ class GameScene: SKScene {
         scoreNode.zPosition = 2
         
         blocks.addChild(block)
-        blocks.addChild(blockTop)
+        //blocks.addChild(blockTop)
+        scoreBlockTop.addChild(scoreNode)
+        scoreBlockTop.addChild(blockTop)
         blocks.addChild(transparentBlock)
-        blocks.addChild(scoreNode)
+       // blocks.addChild(scoreNode)
         blocks.run(moveRemove, withKey: GameScene.moveRemoveBlocksAction)
+        scoreBlockTop.run(moveRemove, withKey: GameScene.moveRemoveBlocksAction)
         
         addChild(blocks)
+        addChild(scoreBlockTop)
         
-        /*if GameScene.score < 3 {
-         bottomBarrier.size.width = widthWall
-         print("\(widthWall)")
-         blocks.position.y = blocks.position.y
-         scoreNode.position.y = scoreNode.position.y
-         } else if GameScene.score >= 3 && GameScene.score < 6 {
-         bottomBarrier.size.width = widthWall + CGFloat.staticWallWidth(wallWidth: 10)
-         print("\(bottomBarrier.size.width )")
-         blocks.position.y = blocks.position.y + CGFloat.staticWallHeight(wallHeight: 20)
-         scoreNode.position.y = scoreNode.position.y + CGFloat.staticWallHeight(wallHeight: 40)
-         } else if GameScene.score >= 6 && GameScene.score < 10 {
-         bottomBarrier.size.width = widthWall + CGFloat.staticWallWidth(wallWidth: 20)
-         print("\(bottomBarrier.size.width )")
-         blocks.position.y = blocks.position.y + CGFloat.staticWallHeight(wallHeight: 40)
-         scoreNode.position.y = scoreNode.position.y + heightWall / 3
+        if GameScene.score < 3 {
+            blocks.position.y = blocks.position.y
+         } else if GameScene.score >= 3 && GameScene.score < 8 {
+           // blocks.position.y = blocks.position.y + gamePercentToPixel(percent: 40)
+            block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 40))
+            scoreBlockTop.position.y = scoreBlockTop.position.y + block.size.height / 7
+            //scoreNode.position = CGPoint(x: frame.maxX, y: block.frame.maxY + frame.height * 0.1)
+         } else if GameScene.score >= 8 && GameScene.score < 10 {
+            block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 60))
+            //blocks.position.y = blocks.position.y + gamePercentToPixel(percent: 60)
          } else if GameScene.score >= 10 {
-         bottomBarrier.size.width = widthWall + CGFloat.staticWallWidth(wallWidth: 30)
-         blocks.position.y = blocks.position.y + CGFloat.random(min: 0,max: 400)
-         scoreNode.position.y = scoreNode.position.y + heightWall / 3
+            blocks.position.y = blocks.position.y + CGFloat.random(min: 0,max: gamePercentToPixel(percent: 100))
          }
-         */
     }
     
     func levelGame() {

@@ -256,7 +256,7 @@ class GameScene: SKScene {
         blocks = SKNode()
 
         let block = SKSpriteNode(imageNamed: StaticValue.wallImageField)
-        block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 40))
+        block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 20))
         block.position = CGPoint(x: frame.maxX, y: frame.minY + block.size.height/2)
         
         block.physicsBody = SKPhysicsBody(rectangleOf: block.size)
@@ -270,7 +270,7 @@ class GameScene: SKScene {
         block.zPosition = 1
         
         
-        let blockTop = SKSpriteNode(color: UIColor.black, size: CGSize(width: block.size.width * 0.75, height: gamePercentToPixel(percent: Int(1))))
+        let blockTop = SKSpriteNode(color: UIColor.black, size: CGSize(width: block.size.width * 0.75, height: gamePercentToPixel(percent: 1)))
         blockTop.position = CGPoint(x: frame.maxX,y: block.frame.maxY)
 
         blockTop.physicsBody = SKPhysicsBody(rectangleOf: blockTop.size)
@@ -283,8 +283,19 @@ class GameScene: SKScene {
         
         blockTop.zPosition = 2
         
-        blocks.addChild(blockTop)
+        
+        let transparentBlock = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
+        transparentBlock.size = CGSize(width: block.size.width / 6, height: gamePercentToPixel(percent: 100))
+        transparentBlock.position = CGPoint(x: frame.maxX, y: frame.midY)
+        
+        transparentBlock.physicsBody = SKPhysicsBody(rectangleOf: transparentBlock.size)
+        transparentBlock.physicsBody?.categoryBitMask = PhysicsCategory.transparentWall
+
+        transparentBlock.physicsBody?.isDynamic = false
+        
         blocks.addChild(block)
+        blocks.addChild(blockTop)
+        blocks.addChild(transparentBlock)
         blocks.run(moveRemove, withKey: GameScene.moveRemoveBlocksAction)
         
         addChild(blocks)

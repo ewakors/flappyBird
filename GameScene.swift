@@ -110,7 +110,6 @@ class GameScene: SKScene {
     //var heightPonyJump = CGFloat()
     var movePipes = SKAction()
     var gameTimer = Timer()
-    var scoreNode = SKSpriteNode()
     var bottomBarrier  = SKSpriteNode()
     
     
@@ -256,7 +255,7 @@ class GameScene: SKScene {
         blocks = SKNode()
 
         let block = SKSpriteNode(imageNamed: StaticValue.wallImageField)
-        block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 20))
+        block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 30))
         block.position = CGPoint(x: frame.maxX, y: frame.minY + block.size.height/2)
         
         block.physicsBody = SKPhysicsBody(rectangleOf: block.size)
@@ -283,7 +282,6 @@ class GameScene: SKScene {
         
         blockTop.zPosition = 2
         
-        
         let transparentBlock = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         transparentBlock.size = CGSize(width: block.size.width / 6, height: gamePercentToPixel(percent: 100))
         transparentBlock.position = CGPoint(x: frame.maxX, y: frame.midY)
@@ -293,70 +291,46 @@ class GameScene: SKScene {
 
         transparentBlock.physicsBody?.isDynamic = false
         
+        let scoreNode = SKSpriteNode(imageNamed: StaticValue.coinImageField)
+        scoreNode.size = CGSize(width: gamePercentToPixel(percent: 10), height: gamePercentToPixel(percent: 10))
+        scoreNode.position = CGPoint(x: frame.maxX, y: block.frame.maxY + frame.height * 0.1)
+        
+        scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
+        scoreNode.physicsBody?.categoryBitMask = PhysicsCategory.score
+
+        scoreNode.physicsBody?.isDynamic = false
+        scoreNode.zPosition = 2
+        
         blocks.addChild(block)
         blocks.addChild(blockTop)
         blocks.addChild(transparentBlock)
+        blocks.addChild(scoreNode)
         blocks.run(moveRemove, withKey: GameScene.moveRemoveBlocksAction)
         
         addChild(blocks)
+        
+        /*if GameScene.score < 3 {
+         bottomBarrier.size.width = widthWall
+         print("\(widthWall)")
+         blocks.position.y = blocks.position.y
+         scoreNode.position.y = scoreNode.position.y
+         } else if GameScene.score >= 3 && GameScene.score < 6 {
+         bottomBarrier.size.width = widthWall + CGFloat.staticWallWidth(wallWidth: 10)
+         print("\(bottomBarrier.size.width )")
+         blocks.position.y = blocks.position.y + CGFloat.staticWallHeight(wallHeight: 20)
+         scoreNode.position.y = scoreNode.position.y + CGFloat.staticWallHeight(wallHeight: 40)
+         } else if GameScene.score >= 6 && GameScene.score < 10 {
+         bottomBarrier.size.width = widthWall + CGFloat.staticWallWidth(wallWidth: 20)
+         print("\(bottomBarrier.size.width )")
+         blocks.position.y = blocks.position.y + CGFloat.staticWallHeight(wallHeight: 40)
+         scoreNode.position.y = scoreNode.position.y + heightWall / 3
+         } else if GameScene.score >= 10 {
+         bottomBarrier.size.width = widthWall + CGFloat.staticWallWidth(wallWidth: 30)
+         blocks.position.y = blocks.position.y + CGFloat.random(min: 0,max: 400)
+         scoreNode.position.y = scoreNode.position.y + heightWall / 3
+         }
+         */
     }
-    
-    func createBarriers() {
-        
-        //self.ponyJumpFeatures()
-        
-        blocks = SKNode()
-       
-
-
-        scoreNode = SKSpriteNode(imageNamed: StaticValue.coinImageField)
-        createCoin(scoreNode: self.scoreNode)
-        blocks.addChild(self.scoreNode)
-
-        bottomBarrier = SKSpriteNode(imageNamed: StaticValue.wallImageField)
-        createBottomBarrier(bottomBarrier: self.bottomBarrier, bottomWidth: self.widthWall, bottomHeight: self.heightWall)
-        
-        blocks.addChild(bottomBarrier)
-        
-        /*bottomBarrierTop = SKSpriteNode(color: UIColor.black, size: CGSize(width: 100, height: 20))
-        bottomBarrierTop.setScale(0.5)
-        bottomBarrierTop.physicsBody = SKPhysicsBody(rectangleOf: bottomBarrierTop.size)
-        bottomBarrierTop.physicsBody?.categoryBitMask = PhysicsCategory.barrierTop
-        bottomBarrierTop.physicsBody?.isDynamic = false
-        bottomBarrierTop.position = CGPoint(x: frame.maxX  ,y: frame.midY)
-        print("\(bottomBarrier.frame.maxY )  \(frame.midY )")
-        bottomBarrierTop.zPosition = 2
-        blocks.addChild(bottomBarrierTop)*/
-        
-        let transparentWall = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
-        createTransparentWall(transparentWall: transparentWall)
-        blocks.addChild(transparentWall)
- 
-        if GameScene.score < 3 {
-            bottomBarrier.size.width = widthWall
-            print("\(widthWall)")
-            blocks.position.y = blocks.position.y
-            scoreNode.position.y = scoreNode.position.y
-        } else if GameScene.score >= 3 && GameScene.score < 6 {
-            bottomBarrier.size.width = widthWall + CGFloat.staticWallWidth(wallWidth: 10)
-            print("\(bottomBarrier.size.width )")
-            blocks.position.y = blocks.position.y + CGFloat.staticWallHeight(wallHeight: 20)
-            scoreNode.position.y = scoreNode.position.y + CGFloat.staticWallHeight(wallHeight: 40)
-        } else if GameScene.score >= 6 && GameScene.score < 10 {
-            bottomBarrier.size.width = widthWall + CGFloat.staticWallWidth(wallWidth: 20)
-            print("\(bottomBarrier.size.width )")
-            blocks.position.y = blocks.position.y + CGFloat.staticWallHeight(wallHeight: 40)
-            scoreNode.position.y = scoreNode.position.y + heightWall / 3
-        } else if GameScene.score >= 10 {
-            bottomBarrier.size.width = widthWall + CGFloat.staticWallWidth(wallWidth: 30)
-            blocks.position.y = blocks.position.y + CGFloat.random(min: 0,max: 400)
-            scoreNode.position.y = scoreNode.position.y + heightWall / 3
-        }
-
-        blocks.run(moveAndRemove)
-        
-        addChild(blocks)
-    } 
     
     func levelGame() {
         if GameScene.gameLevel == 0 && (GameScene.score == 3 || GameScene.score == 4) {
@@ -369,33 +343,6 @@ class GameScene: SKScene {
             GameScene.gameLevel += 1
             levelGameScene()
         }
-    }
-    
-    func createBottomBarrier(bottomBarrier: SKSpriteNode, bottomWidth: CGFloat, bottomHeight: CGFloat) {
-        bottomBarrier.setScale(0.5)
-        bottomBarrier.size.width = bottomWidth
-        bottomBarrier.physicsBody = SKPhysicsBody(rectangleOf: bottomBarrier.size)
-        bottomBarrier.physicsBody?.categoryBitMask = PhysicsCategory.block
-        bottomBarrier.physicsBody?.isDynamic = false
-        bottomBarrier.position = CGPoint(x: frame.maxX + 25 ,y: frame.midY - frame.midY * 1.65)
-        bottomBarrier.zPosition = 2
-    }
-    
-    func createTransparentWall(transparentWall: SKSpriteNode) {
-        transparentWall.size = CGSize(width: 3, height: frame.height)
-        transparentWall.position = CGPoint(x: frame.maxX + 25 , y: frame.midY)
-        transparentWall.physicsBody = SKPhysicsBody(rectangleOf: transparentWall.size)
-        transparentWall.physicsBody?.isDynamic = false
-        transparentWall.physicsBody?.categoryBitMask = PhysicsCategory.transparentWall
-    }
-    
-    func createCoin(scoreNode: SKSpriteNode) {
-        scoreNode.size = CGSize(width: 50, height: 50)
-        scoreNode.position = CGPoint(x: frame.maxX + 25,y: frame.midY * 1.4 - frame.midY)
-        scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
-        scoreNode.physicsBody?.isDynamic = false
-        scoreNode.physicsBody?.categoryBitMask = PhysicsCategory.score
-        scoreNode.zPosition = 2 
     }
     
     func createStartButton() {

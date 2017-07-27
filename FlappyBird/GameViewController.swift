@@ -14,19 +14,22 @@ protocol startValue {
     var distanceBetweenWalls: Float { get set }
     var widthWall: Float { get set }
     var heightWall: Float { get set }
-    var gameTimer: Timer { get set }
     var timeInterval: Float { get set }
     var heightPonyJump: Float { get set }
+    
+    func setDuration(duration: TimeInterval)
+    func setWidthWall(widthWall: Float)
 }
 
 class GameViewController: UIViewController {
 
 
-    var duration = CFTimeInterval()
+    var delegate: startValue?
+    var duration: CFTimeInterval = 3.0
     var distanceBetweenWalls = CGFloat()
     var widthWall = CGFloat()
     var heightWall = CGFloat()
-    var gameTimer = Timer()
+    var gameTimer: Timer? = nil
     var timeInterval = 0.5
     var heightPonyJump = CGFloat()
 
@@ -34,15 +37,29 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         
         if let scene = GameScene(fileNamed:"GameScene") {
- 
+            
+            delegate?.setDuration(duration: duration)
+            delegate?.distanceBetweenWalls = 100.0
+            self.widthWall = 50.0
+            //delegate?.setWidthWall(widthWall: Float(widthWall))
+            //self.distanceBetweenWalls = 100.0
+            
+            //self.heightWall = 20.0
+            self.timeInterval = 0.5
+            self.heightPonyJump = CGFloat.random(min: -50 ,max: 50)
+            
+
+                scene.startGame2(duration: CFTimeInterval(self.duration), distanceBetweenWalls: CGFloat(self.distanceBetweenWalls), widthWall: CGFloat(self.widthWall), heightWall: CGFloat(self.heightWall), heightPonyJump: self.heightPonyJump)
+            
+            
             gameTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block:
                 {(gameTimer) in
-                    self.duration = 3.0
+                    //self.duration =
                     self.distanceBetweenWalls = 100.0
                     self.widthWall = 40.0
-                    self.heightWall = 20.0
+                    //self.heightWall = 20.0
                     self.timeInterval = 0.5
-                    self.heightPonyJump = CGFloat.random(min: -150 ,max: 50)
+                    self.heightPonyJump = CGFloat.random(min: -50 ,max: 50)
                     
                     if scene.gameStarted == true {
                         scene.startGame2(duration: CFTimeInterval(self.duration), distanceBetweenWalls: CGFloat(self.distanceBetweenWalls), widthWall: CGFloat(self.widthWall), heightWall: CGFloat(self.heightWall), heightPonyJump: self.heightPonyJump)
@@ -50,8 +67,6 @@ class GameViewController: UIViewController {
 
             })
 
-
-            
             let skView = self.view as! SKView
             skView.showsFPS = true
             skView.showsNodeCount = true

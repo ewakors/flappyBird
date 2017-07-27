@@ -15,7 +15,7 @@ protocol RestartGame {
 
 class GameOverScene: SKScene {
 
-    let gameOverLabel = SKLabelNode()
+    /*let gameOverLabel = SKLabelNode()
     let scoreLabel = SKLabelNode()
     let highScoreLabel = SKLabelNode()
     var restartButton = SKSpriteNode()
@@ -103,5 +103,5 @@ class GameOverScene: SKScene {
             print("could not find file \(filename)")
             return
         }
-    }
+    }*/
 }

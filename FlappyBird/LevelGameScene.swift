@@ -11,7 +11,7 @@ import AVFoundation
 
 class LevelGameScene: SKScene {
 
-    let levelGameLabel = SKLabelNode()
+   /* let levelGameLabel = SKLabelNode()
     let scoreLabel = SKLabelNode()
     let highScoreLabel = SKLabelNode()
     var continueButton = SKSpriteNode()
@@ -102,5 +102,5 @@ class LevelGameScene: SKScene {
         quitButton.zPosition = 1
         addChild(quitButton)
         quitButton.run(SKAction.scale(to: 1.0, duration: 0.3))
-    }    
+    }   */
 }

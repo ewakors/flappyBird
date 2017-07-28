@@ -254,12 +254,11 @@ class GameScene: SKScene {
     
     func createBlocks() {
         blocks = SKNode()
-        scoreBlockTop = SKNode()
 
         let block = SKSpriteNode(imageNamed: StaticValue.wallImageField)
-        block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 30))
+        block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 10))
         block.position = CGPoint(x: frame.maxX, y: frame.minY + block.size.height/2)
-        
+
         block.physicsBody = SKPhysicsBody(rectangleOf: block.size)
         block.physicsBody?.categoryBitMask = PhysicsCategory.block
         
@@ -273,7 +272,7 @@ class GameScene: SKScene {
         
         let blockTop = SKSpriteNode(color: UIColor.black, size: CGSize(width: block.size.width * 0.75, height: gamePercentToPixel(percent: 1)))
         blockTop.position = CGPoint(x: frame.maxX,y: block.frame.maxY)
-
+        
         blockTop.physicsBody = SKPhysicsBody(rectangleOf: blockTop.size)
         blockTop.physicsBody?.categoryBitMask = PhysicsCategory.blockTop
         
@@ -295,7 +294,7 @@ class GameScene: SKScene {
         
         let scoreNode = SKSpriteNode(imageNamed: StaticValue.coinImageField)
         scoreNode.size = CGSize(width: gamePercentToPixel(percent: 10), height: gamePercentToPixel(percent: 10))
-        scoreNode.position = CGPoint(x: frame.maxX, y: block.frame.maxY + frame.height * 0.1)
+        scoreNode.position = CGPoint(x: frame.maxX, y: block.frame.maxY + gamePercentToPixel(percent: 10))
         
         scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
         scoreNode.physicsBody?.categoryBitMask = PhysicsCategory.score
@@ -304,30 +303,28 @@ class GameScene: SKScene {
         scoreNode.zPosition = 2
         
         blocks.addChild(block)
-        //blocks.addChild(blockTop)
-        scoreBlockTop.addChild(scoreNode)
-        scoreBlockTop.addChild(blockTop)
+        blocks.addChild(blockTop)
         blocks.addChild(transparentBlock)
-       // blocks.addChild(scoreNode)
+        blocks.addChild(scoreNode)
         blocks.run(moveRemove, withKey: GameScene.moveRemoveBlocksAction)
-        scoreBlockTop.run(moveRemove, withKey: GameScene.moveRemoveBlocksAction)
         
         addChild(blocks)
-        addChild(scoreBlockTop)
         
-        if GameScene.score < 3 {
-            blocks.position.y = blocks.position.y
-         } else if GameScene.score >= 3 && GameScene.score < 8 {
-           // blocks.position.y = blocks.position.y + gamePercentToPixel(percent: 40)
-            block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 40))
-            scoreBlockTop.position.y = scoreBlockTop.position.y + block.size.height / 7
-            //scoreNode.position = CGPoint(x: frame.maxX, y: block.frame.maxY + frame.height * 0.1)
-         } else if GameScene.score >= 8 && GameScene.score < 10 {
+        if GameScene.score >= 3 && GameScene.score < 7 {
+            block.size.height = gamePercentToPixel(percent: 30)
+            scoreBlockTopPosition(scoreNode: scoreNode, blockTop: blockTop, block: block)
+        } else if GameScene.score >= 7 && GameScene.score < 13 {
             block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 60))
-            //blocks.position.y = blocks.position.y + gamePercentToPixel(percent: 60)
-         } else if GameScene.score >= 10 {
-            blocks.position.y = blocks.position.y + CGFloat.random(min: 0,max: gamePercentToPixel(percent: 100))
+            scoreBlockTopPosition(scoreNode: scoreNode, blockTop: blockTop, block: block)
+         } else if GameScene.score >= 13 {
+            block.size = CGSize(width: 80, height: CGFloat.random(min: 0, max: gamePercentToPixel(percent: 100)))
+            scoreBlockTopPosition(scoreNode: scoreNode, blockTop: blockTop, block: block)
          }
+    }
+    
+    func scoreBlockTopPosition(scoreNode: SKSpriteNode, blockTop: SKSpriteNode, block: SKSpriteNode) {
+        scoreNode.position.y = block.frame.maxY + frame.height * 0.1
+        blockTop.position = CGPoint(x: frame.maxX,y: block.frame.maxY)
     }
     
     func levelGame() {

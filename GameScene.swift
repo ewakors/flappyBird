@@ -145,22 +145,17 @@ class GameScene: SKScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         if needRestart {
-            for touch: AnyObject in touches {
+            for touch in touches {
                 let location = touch.location(in: self)
-                
                 if restartButton.contains(location) {
                     restartScene()
-                    print("restart")
-                } else {
-                    print("restart restart restart")
-                    restartScene()
-                    startGame()
                 }
             }
         }  else {
             for touch: AnyObject in touches {
                 let location = touch.location(in: self)
                 if startButton.contains(location) {
+                    print("\(startButton.contains(location))")
                     if isStarted == false {
                         startButton.removeFromParent()
                         startGame()
@@ -200,26 +195,6 @@ class GameScene: SKScene {
         
         player.physicsBody?.affectedByGravity = true
     }
-    
-//    func distanceBetweenWalls(duration: CFTimeInterval, distanceLength: CGFloat) {
-//        
-//        let spawn = SKAction.run({
-//            () in
-//                self.createBarriers()
-//        })
-//        
-//        let delay = SKAction.wait(forDuration: duration)
-//        let spawnDelay = SKAction.sequence([spawn,delay])
-//        let spawnDelayForever = SKAction.repeatForever(spawnDelay)
-//        self.run(spawnDelayForever)
-//
-//        let distance = CGFloat(self.frame.width + wall.frame.width)
-//        movePipes = SKAction.moveBy(x: -distance - distanceLength, y: 0, duration: TimeInterval(0.008 * distance))
-//        let removePipes = SKAction.removeFromParent()
-//        moveAndRemove = SKAction.sequence([movePipes,removePipes])
-//    }
-
-   
     
     func startGame2(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat, heightPonyJump: CGFloat ) {
         
@@ -500,13 +475,12 @@ class GameScene: SKScene {
         gameOver.zPosition = 1
         
         restartButton = SKSpriteNode(imageNamed: StaticValue.restartBtnImageField)
-        restartButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 6)
-        restartButton.position = CGPoint(x: frame.midX / 50 , y: frame.midY / 50)
-        restartButton.zPosition = 3
-        
-        gameOver.addChild(restartButton)
-        
+        restartButton.size = CGSize(width: frame.midX / 2 ,height: frame.midY / 6)
+        restartButton.position = CGPoint(x: frame.midX ,y: frame.midY)
+        restartButton.zPosition = 4
+
         addChild(gameOver)
+        addChild(restartButton)
     }
 
     func saveHighScore(highScore:Int) {

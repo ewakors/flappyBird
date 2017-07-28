@@ -171,8 +171,8 @@ class GameScene: SKScene {
 
         physicsWorld.contactDelegate = self
         
-        createScene()
         saveHighScore(highScore: score)
+        createScene()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -184,7 +184,6 @@ class GameScene: SKScene {
                 
                 if restartButton.contains(location) {
                     restartScene()
-                    print("restart button")
                 }
             }
         }  else {
@@ -252,8 +251,16 @@ class GameScene: SKScene {
     func createBlocks() {
         blocks = SKNode()
 
+        let blockHeightPercent: Int!
+        
+        if let random = blocksSettings.randomHeight {
+            blockHeightPercent = Int.randomNumber(range: random.minPercent...random.maxPercent)
+        } else {
+            blockHeightPercent = blocksSettings.heightPercent
+        }
+        
         let block = SKSpriteNode(imageNamed: StaticValue.wallImageField)
-        block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 10))
+        block.size =  CGSize(width: 100, height: toPixelHeight(percent: blockHeightPercent))
         block.position = CGPoint(x: frame.maxX, y: frame.minY + block.size.height/2)
 
         block.physicsBody = SKPhysicsBody(rectangleOf: block.size)
@@ -267,7 +274,7 @@ class GameScene: SKScene {
         block.zPosition = 1
         
         
-        let blockTop = SKSpriteNode(color: UIColor.black, size: CGSize(width: block.size.width * 0.4, height: gamePercentToPixel(percent: 1)))
+        let blockTop = SKSpriteNode(color: UIColor.black, size: CGSize(width: block.size.width * 0.1, height: gamePercentToPixel(percent: 1)))
         blockTop.position = CGPoint(x: frame.maxX,y: block.frame.maxY)
         
         blockTop.physicsBody = SKPhysicsBody(rectangleOf: blockTop.size)
@@ -308,13 +315,13 @@ class GameScene: SKScene {
         addChild(blocks)
         
         if score >= 3 && score < 7 {
-            block.size.height = gamePercentToPixel(percent: 30)
+            block.size.height = toPixelHeight(percent: blockHeightPercent) * 2
             scoreBlockTopPosition(scoreNode: scoreNode, blockTop: blockTop, block: block)
         } else if score >= 7 && score < 13 {
-            block.size = CGSize(width: 80, height: gamePercentToPixel(percent: 60))
+            block.size = CGSize(width: 80, height: toPixelHeight(percent: blockHeightPercent) * 4)
             scoreBlockTopPosition(scoreNode: scoreNode, blockTop: blockTop, block: block)
          } else if score >= 13 {
-            block.size = CGSize(width: 80, height: CGFloat.random(min: 0, max: gamePercentToPixel(percent: 100)))
+            block.size = CGSize(width: 80, height: CGFloat.random(min: 0, max: gamePercentToPixel(percent: 90)))
             scoreBlockTopPosition(scoreNode: scoreNode, blockTop: blockTop, block: block)
          }
     }

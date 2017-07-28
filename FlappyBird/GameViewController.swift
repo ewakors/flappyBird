@@ -17,11 +17,11 @@ class GameViewController: UIViewController {
         if let view = self.view as! SKView? {
             if let scene = GameScene(fileNamed: GameScene.id) {
                 
-                let scenery = ScenerySettings(type: .pony, screenPercentProportionForMaxBlockHeight: 80)
+                let scenery = ScenerySettings(type: .astronaut, screenPercentProportionForMaxBlockHeight: 80)
                 let player = PlayerSettings(jumpHeightPercent: 30)
                 
                 let randomHeight = BlockRandom(minPercent: 10, maxPercent: 50)
-                let blocks = BlocksSettings(timeBetweenBlocks: 3.0, heightPercent: 25, widthTime: 0, randomHeight: randomHeight)
+                let blocks = BlocksSettings(timeBetweenBlocks: 3.0, heightPercent: 10, widthTime: 2, randomHeight: nil)
                 
                 scene.settingsFor(scenery: scenery, player: player, blocks: blocks)
                 

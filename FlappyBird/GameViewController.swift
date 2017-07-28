@@ -61,9 +61,9 @@ class GameViewController: UIViewController {
                     self.timeInterval = 0.5
                     self.heightPonyJump = CGFloat.random(min: -50 ,max: 50)
                     
-                    if scene.gameStarted == true {
+
                         scene.startGame2(duration: CFTimeInterval(self.duration), distanceBetweenWalls: CGFloat(self.distanceBetweenWalls), widthWall: CGFloat(self.widthWall), heightWall: CGFloat(self.heightWall), heightPonyJump: self.heightPonyJump)
-                    }
+                    
 
             })
 

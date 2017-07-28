@@ -31,7 +31,7 @@ enum GameScenery {
     func backgroundImageName() -> String {
         switch self {
         case .pony:
-            return "Background_pony"
+            return "Background2"
         case .astronaut:
             return "Background_astronaut"
         }
@@ -40,7 +40,7 @@ enum GameScenery {
     func playerImageName() -> String {
         switch self {
         case .pony:
-            return StaticValue.ponyImageField
+            return "Kucyk"
         case .astronaut:
             return "Player_astronaut"
         }
@@ -58,7 +58,7 @@ enum GameScenery {
     func blockImageName() -> String {
         switch self {
         case .pony:
-            return "Block_pony"
+            return "Wall"
         case .astronaut:
             return "Block_astronaut"
         }
@@ -121,14 +121,14 @@ class GameScene: SKScene {
     static var musicGame = SKAudioNode()
     static let createBlocksAction = "createBlocksAction"
     static let moveRemoveBlocksAction = "moveRemoveBlocksAction"
+    static let id = "GameScene"
     
     let borderWallWidth = CGFloat(1.0)
-    let grassHeight = CGFloat(1.0)
+    let grassHeight = CGFloat(10.0)
     
     var score = Int()
     let scoreLabel = SKLabelNode()
     let highScoreLabel = SKLabelNode()
-
     
     var topWall = SKSpriteNode()
     var bottomWall = SKSpriteNode()
@@ -146,16 +146,6 @@ class GameScene: SKScene {
     
     
     var mute: Bool = false
-    var duration = CFTimeInterval()
-    //var duration: CFTimeInterval = CFTimeInterval(UserDefaults.standard.float(forKey: StaticValue.durationField))
-    //var distanceBetweenWalls: CGFloat = CGFloat(UserDefaults.standard.float(forKey: StaticValue.distanceBetweenWallsField))
-    var distanceBetweenWalls = CGFloat()
-    //var widthWall: CGFloat = CGFloat(UserDefaults.standard.float(forKey: StaticValue.widthWallField))
-    var widthWall = CGFloat()
-    var heightWall: CGFloat = CGFloat(UserDefaults.standard.float(forKey: StaticValue.heightWallField))
-    var heightPonyJump = CGFloat()
-    //var heightPonyJump: CGFloat = CGFloat(UserDefaults.standard.float(forKey: StaticValue.heightPonyJumpField))
-    
     
     var gameOver = SKSpriteNode()
     var restartButton = SKSpriteNode()
@@ -194,6 +184,7 @@ class GameScene: SKScene {
                 
                 if restartButton.contains(location) {
                     restartScene()
+                    print("restart button")
                 }
             }
         }  else {
@@ -219,18 +210,15 @@ class GameScene: SKScene {
         
         isStarted = true
         
-        let action = SKAction.run {
+        let createBlocksAction = SKAction.run {
             self.createBlocks()
         }
         
-        let distance = CGFloat(self.frame.width+blocks.frame.width)
-        let interval = 0.008 * distance
-        
-        let timeBetweenBlocks = SKAction.wait(forDuration: TimeInterval(interval))
-        let actions = SKAction.sequence([action, timeBetweenBlocks])
-        let actionsForever = SKAction.repeatForever(actions)
-        
+        let actionsForever = SKAction.repeatForever(SKAction.sequence([createBlocksAction, SKAction.wait(forDuration: TimeInterval(blocksSettings.timeBetweenBlocks))]))
         run(actionsForever, withKey: GameScene.createBlocksAction)
+        
+        let distance = CGFloat(self.frame.width+blocks.frame.width)
+        let interval = 0.008*distance
         
         let move = SKAction.moveBy(x: -distance, y: 0.0, duration: TimeInterval(interval))
         let remove = SKAction.removeFromParent()
@@ -240,10 +228,7 @@ class GameScene: SKScene {
         player.physicsBody?.affectedByGravity = true
     }
     
-    func startGame2(duration: CFTimeInterval, distanceBetweenWalls: CGFloat, widthWall: CGFloat, heightWall: CGFloat, heightPonyJump: CGFloat ) {
-    }
-    
-    func settingFor(scenery: ScenerySettings, player: PlayerSettings, blocks: BlocksSettings) {
+    func settingsFor(scenery: ScenerySettings, player: PlayerSettings, blocks: BlocksSettings) {
         self.scenerySettings = scenery
         self.playerSettings = player
         self.blocksSettings = blocks
@@ -392,8 +377,8 @@ class GameScene: SKScene {
     
     func createScene() {
 
-        //self.physicsWorld.contactDelegate = self
         gameOver.removeAllChildren()
+        restartButton.removeAllChildren()
         
         background = SKSpriteNode(imageNamed: scenerySettings.type.backgroundImageName())
         background.position = CGPoint(x: frame.midX, y: frame.midY)
@@ -401,8 +386,8 @@ class GameScene: SKScene {
         addChild(background)
 
         player = SKSpriteNode(imageNamed: scenerySettings.type.playerImageName())
-        player.size = CGSize(width: 100, height: 100)
-        player.setCenter()
+        player.size = CGSize(width: frame.midX / 3, height: frame.midY / 3 )
+        player.position = CGPoint(x: frame.midX , y: frame.midY)
 
         player.physicsBody = SKPhysicsBody(circleOfRadius: player.size.height / 2)
         player.physicsBody?.categoryBitMask = PhysicsCategory.player
@@ -425,7 +410,6 @@ class GameScene: SKScene {
         topWall.physicsBody?.isDynamic = false
         wall.addChild(topWall)
         
-       // rightWall = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         rightWall.size = CGSize(width: borderWallWidth, height: frame.height * 2)
         rightWall.position = CGPoint(x: frame.maxX,y: frame.midY)
         
@@ -434,7 +418,6 @@ class GameScene: SKScene {
         rightWall.physicsBody?.isDynamic = false
         wall.addChild(rightWall)
         
-        //leftWall = SKSpriteNode(imageNamed: StaticValue.transparentWallImageField)
         leftWall.size = CGSize(width: borderWallWidth, height: frame.height * 2)
         leftWall.position = CGPoint(x: frame.minX ,y: frame.midY)
         leftWall.physicsBody = SKPhysicsBody(rectangleOf: leftWall.size)
@@ -493,7 +476,6 @@ class GameScene: SKScene {
     }
     
     func summaryGame() {
-        
         removeAllActions()
         removeAllChildren()
         
@@ -511,7 +493,7 @@ class GameScene: SKScene {
         
         createScoreLabel()
         
-        gameOver = SKSpriteNode(imageNamed: StaticValue.backgroundImageField)
+        gameOver = SKSpriteNode(imageNamed: scenerySettings.type.backgroundImageName())
         gameOver.size = self.frame.size
         gameOver.position = CGPoint(x: frame.midX, y: frame.midY)
         gameOver.zPosition = 1
@@ -566,6 +548,7 @@ class GameScene: SKScene {
 }
 
 extension GameScene: SKPhysicsContactDelegate {
+    
     func didBegin(_ contact: SKPhysicsContact) {
         
         if isGameOver(contact: contact) {

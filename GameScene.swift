@@ -500,8 +500,8 @@ class GameScene: SKScene {
         gameOver.zPosition = 1
         
         restartButton = SKSpriteNode(imageNamed: StaticValue.restartBtnImageField)
-        restartButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 4 )
-        restartButton.position = CGPoint(x: frame.midX, y: frame.midY * 0.75)
+        restartButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 6)
+        restartButton.position = CGPoint(x: frame.midX / 50 , y: frame.midY / 50)
         restartButton.zPosition = 3
         
         gameOver.addChild(restartButton)

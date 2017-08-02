@@ -144,6 +144,8 @@ class GameScene: SKScene {
     var stopMusicButton = SKSpriteNode()
     var startMusicButton = SKSpriteNode()
     
+    var levelGameBackground = SKSpriteNode()
+    var continueButton = SKSpriteNode()
     
     var mute: Bool = false
     
@@ -194,6 +196,9 @@ class GameScene: SKScene {
                         startButton.removeFromParent()
                         startGame()
                     }
+                } else if continueButton.contains(location){
+                    continueButton.removeFromParent()
+                    startGame()
                 } else {
                     playerJump(percent: playerSettings.jumpHeightPercent)
                 }
@@ -324,6 +329,8 @@ class GameScene: SKScene {
             block.size = CGSize(width: 80, height: CGFloat.random(min: 0, max: gamePercentToPixel(percent: 90)))
             scoreBlockTopPosition(scoreNode: scoreNode, blockTop: blockTop, block: block)
          }
+        
+        levelGame()
     }
     
     func scoreBlockTopPosition(scoreNode: SKSpriteNode, blockTop: SKSpriteNode, block: SKSpriteNode) {
@@ -332,16 +339,16 @@ class GameScene: SKScene {
     }
     
     func levelGame() {
-       /* if GameScene.gameLevel == 0 && (GameScene.score == 3 || GameScene.score == 4) {
+        if GameScene.gameLevel == 0 && (score == 3 || score == 4) {
             levelGameScene()
             GameScene.gameLevel += 1
-        } else if GameScene.gameLevel == 1 && (GameScene.score == 6 || GameScene.score == 7) {
+        } else if GameScene.gameLevel == 1 && (score == 6 || score == 7) {
             GameScene.gameLevel += 1
             levelGameScene()
-        } else if GameScene.gameLevel == 2 && (GameScene.score == 10 || GameScene.score == 11) {
+        } else if GameScene.gameLevel == 2 && (score == 10 || score == 11) {
             GameScene.gameLevel += 1
             levelGameScene()
-        }*/
+        }
     }
     
     func createStopMusicButton() {
@@ -375,11 +382,22 @@ class GameScene: SKScene {
     
     func levelGameScene() {
         GameScene.musicGame.run((SKAction.stop()))
-        let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
-        let scene = LevelGameScene(size: self.size)
-        self.view?.presentScene(scene, transition: reveal)
+        
         removeAllChildren()
         removeAllActions()
+        
+        levelGameBackground = SKSpriteNode(imageNamed: scenerySettings.type.backgroundImageName())
+        levelGameBackground.position = CGPoint(x: frame.midX, y: frame.midY)
+        levelGameBackground.size = frame.size
+        addChild(levelGameBackground)
+        
+        createScoreLabel()
+        
+        continueButton = SKSpriteNode(imageNamed: StaticValue.startBtnImageField)
+        continueButton.size = CGSize(width: frame.midX / 2, height: frame.midY / 6 )
+        continueButton.position = CGPoint(x: frame.midX, y: frame.midY)
+        continueButton.zPosition = 4
+        addChild(continueButton)
     }
     
     func createScene() {

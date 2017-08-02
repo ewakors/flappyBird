@@ -17,7 +17,7 @@ class GameViewController: UIViewController {
         if let view = self.view as! SKView? {
             if let scene = GameScene(fileNamed: GameScene.id) {
                 
-                let scenery = ScenerySettings(type: .astronaut, screenPercentProportionForMaxBlockHeight: 80)
+                let scenery = ScenerySettings(type: .pony, screenPercentProportionForMaxBlockHeight: 80)
                 let player = PlayerSettings(jumpHeightPercent: 30)
                 
                 let randomHeight = BlockRandom(minPercent: 10, maxPercent: 50)
